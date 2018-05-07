@@ -27,7 +27,7 @@ public class Player {
     }
 
     public void addGamePlayer(GamePlayer gamePlayer) {
-//        gamePlayer.setPlayer(this);       don't need this line because the Game is already set in the GamePlayer constructor.
+//        gamePlayer.setPlayer(this);       don't need this line because the Player is already set in the GamePlayer constructor.
         gamePlayers.add(gamePlayer);
     }
 
@@ -43,6 +43,7 @@ public class Player {
         return id;
     }
 
+    @JsonIgnore
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
     }

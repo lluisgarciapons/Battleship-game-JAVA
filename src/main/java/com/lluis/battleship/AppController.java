@@ -1,6 +1,7 @@
 package com.lluis.battleship;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,12 +16,17 @@ public class AppController {
     private PlayerRepository playerRepo;
     private GameRepository gameRepo;
     private GamePlayerRepository gamePlayerRepo;
+    private ShipRepository shipRepo;
 
     @Autowired
-    AppController(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo) {
+    AppController(PlayerRepository playerRepo,
+                  GameRepository gameRepo,
+                  GamePlayerRepository gamePlayerRepo,
+                  ShipRepository shipRepo) {
         this.playerRepo = playerRepo;
         this.gameRepo = gameRepo;
         this.gamePlayerRepo = gamePlayerRepo;
+        this.shipRepo = shipRepo;
     }
 
     @RequestMapping("/players")
@@ -40,28 +46,28 @@ public class AppController {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
-        dto.put("gamePlayers", getGamePlayerDTO(game.getGamePlayers()));
+        dto.put("gamePlayers", findGamePlayerDTO(game.getGamePlayers()));
 
         return dto;
     }
 
-    private List<Map> getGamePlayerDTO(Set<GamePlayer> gamePlayer) {
+    private List<Map> findGamePlayerDTO(Set<GamePlayer> gamePlayer) {
 
         return gamePlayer
                 .stream()
-                .map(item -> getItemsDTO(item))
+                .map(item -> getGamePlayerDTO(item))
                 .collect(Collectors.toList());
     }
 
-    private Map<String, Object> getItemsDTO(GamePlayer gamePlayer) {
+    private Map<String, Object> getGamePlayerDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", gamePlayer.getId());
-        dto.put("player", playerItemsDTO(gamePlayer));
+        dto.put("player", playerToDTO(gamePlayer));
 
         return dto;
     }
 
-    private Map<String, Object> playerItemsDTO(GamePlayer gamePlayer) {
+    private Map<String, Object> playerToDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", gamePlayer.getPlayer().getId());
         dto.put("username", gamePlayer.getPlayer().getUserName());
@@ -73,4 +79,39 @@ public class AppController {
     public List<GamePlayer> getGamePlayers(){
         return gamePlayerRepo.findAll();
     }
+
+    @RequestMapping("/ships")
+    public List<Ship> getShips(){
+        return shipRepo.findAll();
+    }
+
+    @RequestMapping("/game_view/{nn}")
+    public Map<String, Object> getGameView(@PathVariable("nn") long id) {
+        GamePlayer gp = gamePlayerRepo.getOne(id);
+        Map<String, Object> selectedGame = new LinkedHashMap<>();
+
+        selectedGame.put("gameId", gp.getGame().getId());
+        selectedGame.put("gameCreated", gp.getGame().getCreationDate());
+        selectedGame.put("gamePlayers", findGamePlayerDTO(gp.getGame().getGamePlayers()));
+        selectedGame.put("ships", findShipsDTO(gp.getShips()));
+
+         return selectedGame;
+    }
+
+    private List<Map> findShipsDTO(Set<Ship> ships) {
+        return ships
+                .stream()
+                .map(ship -> getShipsToDTO(ship))
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Object> getShipsToDTO(Ship ship) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("type", ship.getType());
+        dto.put("location", ship.getLocations());
+
+        return dto;
+    }
 }
+
+

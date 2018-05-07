@@ -4,7 +4,6 @@ $(document).ready(function() {
         data: {
             url: '/api/games',
             allData: "",
-            gamePlayer: "",
         },
 
         created: function() {
@@ -26,10 +25,17 @@ $(document).ready(function() {
                 })
             },
 
+            getPlayerTwo: function(data) {
+                if(data.gamePlayers.length == 2) {
+                    return data.gamePlayers[1].player.username;
+                }else {
+                    return "[WAITING FOR AN OPPONENT]";
+                }
+            },
+
             getDate: function(data) {
-                var date = new Date(data.created);
-                return date.toLocaleString();
+                return new Date(data.created).toLocaleString();
             }
         }
     })
-})
+});
