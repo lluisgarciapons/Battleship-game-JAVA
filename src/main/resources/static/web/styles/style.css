@@ -1,0 +1,31 @@
+.table,
+tr,
+td,
+th {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+tr,
+th,
+td {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+
+.table_headers {
+    background-color: rgba(145, 255, 243, 0.69);
+}
+
+.ship {
+    background-color: darkgrey;
+}
+
+.hit {
+    background-color: darkred;
+}
+
+.miss {
+    background-color: dodgerblue;
+}
