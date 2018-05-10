@@ -1,9 +1,11 @@
 package com.lluis.battleship;
 
+import com.sun.org.apache.bcel.internal.generic.SALOAD;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -22,7 +24,8 @@ public class BattleshipApplication {
 	public CommandLineRunner initData(GameRepository gameRepository,
                                       PlayerRepository playerRepository,
                                       GamePlayerRepository gamePlayerRepository,
-                                      ShipRepository shipRepository) {
+                                      ShipRepository shipRepository,
+                                      SalvoRepository salvoRepository) {
 		return (args) -> {
 
             Player player1 = new Player("j.bauer@ctu.gov");
@@ -95,7 +98,7 @@ public class BattleshipApplication {
             gamePlayerRepository.save(GP82);
 
             Set<String> DS1 = new HashSet<>(Arrays.asList("H2", "H3", "H4"));
-            Set<String> SB1 = new HashSet<>(Arrays.asList("E1", "F5", "G1"));
+            Set<String> SB1 = new HashSet<>(Arrays.asList("E1", "F1", "G1"));
             Set<String> PB1 = new HashSet<>(Arrays.asList("B4", "B5"));
             Set<String> DS2 = new HashSet<>(Arrays.asList("B5", "C5", "D5"));
             Set<String> PB2 = new HashSet<>(Arrays.asList("F1", "F2"));
@@ -159,6 +162,71 @@ public class BattleshipApplication {
             shipRepository.save(ship26);
             shipRepository.save(ship27);
 
+            Set<String> s111 = new HashSet<>(Arrays.asList("B5", "C5", "F1"));
+            Set<String> s112 = new HashSet<>(Arrays.asList("B4", "B5", "B6"));
+            Set<String> s121 = new HashSet<>(Arrays.asList("F2", "D5"));
+            Set<String> s122 = new HashSet<>(Arrays.asList("E1", "H3", "A2"));
+            Set<String> s211 = new HashSet<>(Arrays.asList("A2", "A4", "G6"));
+            Set<String> s212 = new HashSet<>(Arrays.asList("B5", "D5", "C7"));
+            Set<String> s221 = new HashSet<>(Arrays.asList("A3", "H6"));
+            Set<String> s222 = new HashSet<>(Arrays.asList("C5", "C6"));
+            Set<String> s311 = new HashSet<>(Arrays.asList("G6", "H6", "A4"));
+            Set<String> s312 = new HashSet<>(Arrays.asList("H1", "H2", "H3"));
+            Set<String> s321 = new HashSet<>(Arrays.asList("A2", "A3", "D8"));
+            Set<String> s322 = new HashSet<>(Arrays.asList("E1", "F2", "G3"));
+            Set<String> s411 = new HashSet<>(Arrays.asList("A3", "A4", "F7"));
+            Set<String> s412 = new HashSet<>(Arrays.asList("B5", "C6", "H1"));
+            Set<String> s421 = new HashSet<>(Arrays.asList("A2", "G6", "H6"));
+            Set<String> s422 = new HashSet<>(Arrays.asList("C5", "C7", "D5"));
+            Set<String> s511 = new HashSet<>(Arrays.asList("A1", "A2", "A3"));
+            Set<String> s512 = new HashSet<>(Arrays.asList("B5", "B6", "C7"));
+            Set<String> s521 = new HashSet<>(Arrays.asList("G6", "G7", "G8"));
+            Set<String> s522 = new HashSet<>(Arrays.asList("C6", "D6", "E6"));
+            Set<String> s532 = new HashSet<>(Arrays.asList("H1", "H8"));
+
+            Salvo salvo1 = new Salvo(1, s111, GP11);
+            Salvo salvo2 = new Salvo(1, s112, GP12);
+            Salvo salvo3 = new Salvo(2, s121, GP11);
+            Salvo salvo4 = new Salvo(2, s122, GP12);
+            Salvo salvo5 = new Salvo(1, s211, GP21);
+            Salvo salvo6 = new Salvo(1, s212, GP22);
+            Salvo salvo7 = new Salvo(2, s221, GP21);
+            Salvo salvo8 = new Salvo(2, s222, GP22);
+            Salvo salvo9 = new Salvo(1, s311, GP31);
+            Salvo salvo10 = new Salvo(1, s312, GP32);
+            Salvo salvo11 = new Salvo(2, s321, GP31);
+            Salvo salvo12 = new Salvo(2, s322, GP32);
+            Salvo salvo13 = new Salvo(1, s411, GP41);
+            Salvo salvo14 = new Salvo(1, s412, GP42);
+            Salvo salvo15 = new Salvo(2, s421, GP41);
+            Salvo salvo16 = new Salvo(2, s421, GP42);
+            Salvo salvo17 = new Salvo(1, s511, GP51);
+            Salvo salvo18 = new Salvo(1, s512, GP52);
+            Salvo salvo19 = new Salvo(2, s521, GP51);
+            Salvo salvo20 = new Salvo(2, s522, GP52);
+            Salvo salvo21 = new Salvo(3, s532, GP52);
+
+            salvoRepository.save(salvo1);
+            salvoRepository.save(salvo2);
+            salvoRepository.save(salvo3);
+            salvoRepository.save(salvo4);
+            salvoRepository.save(salvo5);
+            salvoRepository.save(salvo6);
+            salvoRepository.save(salvo7);
+            salvoRepository.save(salvo8);
+            salvoRepository.save(salvo9);
+            salvoRepository.save(salvo10);
+            salvoRepository.save(salvo11);
+            salvoRepository.save(salvo12);
+            salvoRepository.save(salvo13);
+            salvoRepository.save(salvo14);
+            salvoRepository.save(salvo15);
+            salvoRepository.save(salvo16);
+            salvoRepository.save(salvo17);
+            salvoRepository.save(salvo18);
+            salvoRepository.save(salvo19);
+            salvoRepository.save(salvo20);
+            salvoRepository.save(salvo21);
         };
 	}
 }

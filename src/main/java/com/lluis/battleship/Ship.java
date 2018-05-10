@@ -15,7 +15,7 @@ public class Ship {
     private String type;
 
     @ElementCollection
-    @Column(name="location")
+    @Column(name = "shipLocation")
     private Set<String> locations;
 
     @ManyToOne(fetch = FetchType.EAGER)
