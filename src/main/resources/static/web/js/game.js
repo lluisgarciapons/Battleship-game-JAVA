@@ -50,15 +50,15 @@ function urlCall() {
             console.log(json);
             var gameData = json;
 
+            myId = getKey("gp");
             printShipLocations(gameData);
             userVsOpponent(gameData);
-            myId = getKey("gp");
-            if (gameData.gamePlayers.length < 2) {
-                return false;
+            if (gameData.gamePlayers.length == 2) {
+                getOpponentId(gameData, myId);
+                printSalvoes(gameData, "my");
+                printSalvoes(gameData, "op");
             }
-            getOpponentId(gameData, myId);
-            printSalvoes(gameData, "my");
-            printSalvoes(gameData, "op");
+
         }
     })
 }
@@ -95,16 +95,17 @@ function userVsOpponent(gameData) {
     var user;
     var opponent;
 
-    if (gameData.gamePlayers[0].id == myId) {
-        user = gameData.gamePlayers[0].player.username;
-        if (gameData.gamePlayers[1]){
+    if (gameData.gamePlayers.length == 1) {
+     user = gameData.gamePlayers[0].player.username;
+     opponent = "[WAITING FOR AN OPPONENT]";
+    } else {
+        if (gameData.gamePlayers[0].id == myId) {
+            user = gameData.gamePlayers[0].player.username;
             opponent = gameData.gamePlayers[1].player.username;
         } else {
-            opponent = "[WAITING FOR AN OPPONENT]"
+            user = gameData.gamePlayers[1].player.username;
+            opponent = gameData.gamePlayers[0].player.username;
         }
-    } else {
-        user = gameData.gamePlayers[1].player.username;
-        opponent = gameData.gamePlayers[0].player.username;
     }
 
     $("#players").append(user + " Vs. " + opponent);
@@ -126,18 +127,20 @@ function printSalvoes(gameData, who) {
 
     for (var turn in salvoes) {
         // console.log("turn: ", turn);
-        var shots = salvoes[turn][id];
-        // console.log("shots: ", shots);
+        if (salvoes[turn].hasOwnProperty(id)) {
+            var shots = salvoes[turn][id];
+            // console.log("shots: ", shots);
 
-        for (var i = 0; i < shots.length; i++) {
-            var shot = shots[i];
-            var cell = "#" + shot + against;
-            if ($(cell).hasClass("ship")) {
-                $(cell).addClass("hit");
-            } else {
-                $(cell).addClass("miss");
+            for (var i = 0; i < shots.length; i++) {
+                var shot = shots[i];
+                var cell = "#" + shot + against;
+                if ($(cell).hasClass("ship")) {
+                    $(cell).addClass("hit");
+                } else {
+                    $(cell).addClass("miss");
+                }
+                $(cell).text(turn);
             }
-            $(cell).text(turn);
         }
     }
 }

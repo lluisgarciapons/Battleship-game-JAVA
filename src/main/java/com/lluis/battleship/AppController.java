@@ -1,13 +1,10 @@
 package com.lluis.battleship;
 
-import com.sun.org.apache.bcel.internal.generic.SALOAD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.Id;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,18 +17,21 @@ public class AppController {
     private GamePlayerRepository gamePlayerRepo;
     private ShipRepository shipRepo;
     private SalvoRepository salvoRepo;
+    private ScoreRepository scoreRepo;
 
     @Autowired
     AppController(PlayerRepository playerRepo,
                   GameRepository gameRepo,
                   GamePlayerRepository gamePlayerRepo,
                   ShipRepository shipRepo,
-                  SalvoRepository salvoRepo) {
+                  SalvoRepository salvoRepo,
+                  ScoreRepository scoreRepo) {
         this.playerRepo = playerRepo;
         this.gameRepo = gameRepo;
         this.gamePlayerRepo = gamePlayerRepo;
         this.shipRepo = shipRepo;
         this.salvoRepo = salvoRepo;
+        this.scoreRepo = scoreRepo;
     }
 
     @RequestMapping("/players")
@@ -66,12 +66,29 @@ public class AppController {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
-        dto.put("gamePlayers", findGamePlayerDTO(game.getGamePlayers()));
+        dto.put("gamePlayers", findGamePlayer(game.getGamePlayers()));
+        dto.put("scores", findScores(game.getScores()));
 
         return dto;
     }
 
-    private List<Map> findGamePlayerDTO(Set<GamePlayer> gamePlayer) {
+    private List<Map> findScores(Set<Score> scores) {
+
+        return scores.stream()
+                .map(item -> getScoresToDTO(item))
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Object> getScoresToDTO(Score score) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", score.getId());
+        dto.put("playerId", score.getPlayer().getId());
+        dto.put("score", score.getScore());
+
+        return dto;
+    }
+
+    private List<Map> findGamePlayer(Set<GamePlayer> gamePlayer) {
 
         return gamePlayer
                 .stream()
@@ -83,7 +100,6 @@ public class AppController {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", gamePlayer.getId());
         dto.put("player", playerToDTO(gamePlayer));
-//        dto.put("salvoes", gamePlayer.getSalvoes());
 
         return dto;
     }
@@ -103,7 +119,7 @@ public class AppController {
 
         selectedGame.put("gameId", gp.getGame().getId());
         selectedGame.put("gameCreated", gp.getGame().getCreationDate());
-        selectedGame.put("gamePlayers", findGamePlayerDTO(gp.getGame().getGamePlayers()));
+        selectedGame.put("gamePlayers", findGamePlayer(gp.getGame().getGamePlayers()));
         selectedGame.put("ships", findShipsDTO(gp.getShips()));
         selectedGame.put("salvoes", getSalvoesDTO(findSalvoesDTO(gp.getGame().getGamePlayers())));
          return selectedGame;

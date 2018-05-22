@@ -20,6 +20,9 @@ public class Player {
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
 
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private Set<Score> scores = new HashSet<>();
+
     public Player() { }
 
     public Player(String userName) {
@@ -29,6 +32,10 @@ public class Player {
     public void addGamePlayer(GamePlayer gamePlayer) {
 //        gamePlayer.setPlayer(this);       don't need this line because the Player is already set in the GamePlayer constructor.
         gamePlayers.add(gamePlayer);
+    }
+
+    public void addScore(Score score) {
+        scores.add(score);
     }
 
     public String getUserName() {
@@ -53,5 +60,9 @@ public class Player {
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
     }
 
+    @JsonIgnore
+    public Set<Score> getScores() {
+        return scores;
+    }
 }
 

@@ -25,7 +25,8 @@ public class BattleshipApplication {
                                       PlayerRepository playerRepository,
                                       GamePlayerRepository gamePlayerRepository,
                                       ShipRepository shipRepository,
-                                      SalvoRepository salvoRepository) {
+                                      SalvoRepository salvoRepository,
+                                      ScoreRepository scoreRepository) {
 		return (args) -> {
 
             Player player1 = new Player("j.bauer@ctu.gov");
@@ -227,6 +228,25 @@ public class BattleshipApplication {
             salvoRepository.save(salvo19);
             salvoRepository.save(salvo20);
             salvoRepository.save(salvo21);
+
+            Score score11 = new Score(game1, player1, 1.0);
+            Score score12 = new Score(game1, player2, 0.0);
+            Score score21 = new Score(game2, player1, 0.5);
+            Score score22 = new Score(game2, player2, 0.5);
+            Score score31 = new Score(game3, player2, 1.0);
+            Score score32 = new Score(game3, player3, 0.0);
+            Score score41 = new Score(game4, player2, 0.5);
+            Score score42 = new Score(game4, player1, 0.5);
+
+            scoreRepository.save(score11);
+            scoreRepository.save(score12);
+            scoreRepository.save(score21);
+            scoreRepository.save(score22);
+            scoreRepository.save(score31);
+            scoreRepository.save(score32);
+            scoreRepository.save(score41);
+            scoreRepository.save(score42);
+
         };
 	}
 }

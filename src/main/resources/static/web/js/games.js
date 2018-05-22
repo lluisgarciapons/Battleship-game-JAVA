@@ -1,3 +1,6 @@
+var myId;
+var opId;
+
 $(document).ready(function() {
     var app = new Vue({
         el: "#app-content",
