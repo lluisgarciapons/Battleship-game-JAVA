@@ -92,6 +92,9 @@ public class AppController {
 
         return gamePlayer
                 .stream()
+                .sorted((a, b) -> {
+                    return (int)(a.getId() - b.getId());
+                })
                 .map(item -> getGamePlayerDTO(item))
                 .collect(Collectors.toList());
     }

@@ -200,7 +200,7 @@ public class BattleshipApplication {
             Salvo salvo13 = new Salvo(1, s411, GP41);
             Salvo salvo14 = new Salvo(1, s412, GP42);
             Salvo salvo15 = new Salvo(2, s421, GP41);
-            Salvo salvo16 = new Salvo(2, s421, GP42);
+            Salvo salvo16 = new Salvo(2, s422, GP42);
             Salvo salvo17 = new Salvo(1, s511, GP51);
             Salvo salvo18 = new Salvo(1, s512, GP52);
             Salvo salvo19 = new Salvo(2, s521, GP51);
@@ -234,7 +234,7 @@ public class BattleshipApplication {
             Score score21 = new Score(game2, player1, 0.5);
             Score score22 = new Score(game2, player2, 0.5);
             Score score31 = new Score(game3, player2, 1.0);
-            Score score32 = new Score(game3, player3, 0.0);
+            Score score32 = new Score(game3, player4, 0.0);
             Score score41 = new Score(game4, player2, 0.5);
             Score score42 = new Score(game4, player1, 0.5);
 

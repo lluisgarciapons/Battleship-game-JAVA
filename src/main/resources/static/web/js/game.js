@@ -58,16 +58,15 @@ function urlCall() {
                 printSalvoes(gameData, "my");
                 printSalvoes(gameData, "op");
             }
-
         }
     })
 }
 
 function getOpponentId(gameData, myId) {
-    for (var i = 0; i < gameData.gamePlayers.length; i++) {
-        if (gameData.gamePlayers[i].id != myId) {
-            opId = (gameData.gamePlayers[i].id).toString();
-        }
+        if (gameData.gamePlayers[0].id != myId) {
+            opId = (gameData.gamePlayers[0].id).toString();
+        }else {
+            opId = (gameData.gamePlayers[1].id).toString();
     }
 }
 
@@ -144,3 +143,4 @@ function printSalvoes(gameData, who) {
         }
     }
 }
+

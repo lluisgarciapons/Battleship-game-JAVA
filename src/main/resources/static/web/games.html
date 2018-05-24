@@ -9,7 +9,27 @@
     <div id="app-content">
         <ol><li v-for="data in allData">
                 {{getDate(data)}}, {{data.gamePlayers["0"].player.username}} vs. {{getPlayerTwo(data)}}
-            </li></ol>
+            </li>
+        </ol>
+
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Tied</th>
+            </thead>
+            <tbody>
+                <tr v-for="player in players">
+                    <td> {{ player }} </td>
+                    <td> {{ findScores(player, "total") }} </td>
+                    <td> {{ findScores(player, "wins") }} </td>
+                    <td> {{ findScores(player, "loses") }} </td>
+                    <td> {{ findScores(player, "ties") }} </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 

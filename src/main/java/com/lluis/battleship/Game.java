@@ -3,10 +3,7 @@ package com.lluis.battleship;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,10 +16,10 @@ public class Game {
     private Date date;
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
-    private Set<GamePlayer> gamePlayers = new HashSet<>();
+    private Set<GamePlayer> gamePlayers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
-    private Set<Score> scores = new HashSet<>();
+    private Set<Score> scores = new LinkedHashSet<>();
 
     public void addGamePlayer(GamePlayer gamePlayer) {
 //        gamePlayer.setGame(this);     don't need this line because the Game is already set in the GamePlayer constructor.

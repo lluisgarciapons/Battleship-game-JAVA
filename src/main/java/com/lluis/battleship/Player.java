@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,10 +19,10 @@ public class Player {
     private String userName;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
-    private Set<GamePlayer> gamePlayers = new HashSet<>();
+    private Set<GamePlayer> gamePlayers = new LinkedHashSet<>();
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
-    private Set<Score> scores = new HashSet<>();
+    private Set<Score> scores = new LinkedHashSet<>();
 
     public Player() { }
 

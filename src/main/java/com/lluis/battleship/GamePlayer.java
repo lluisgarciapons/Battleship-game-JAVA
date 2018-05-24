@@ -2,6 +2,7 @@ package com.lluis.battleship;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -20,10 +21,10 @@ public class GamePlayer {
     private Player player;
 
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
-    private Set<Ship> ships = new HashSet<>();
+    private Set<Ship> ships = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
-    private Set<Salvo> salvoes = new HashSet<>();
+    private Set<Salvo> salvoes = new LinkedHashSet<>();
 
     public GamePlayer() {}
 
