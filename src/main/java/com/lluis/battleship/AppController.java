@@ -1,9 +1,12 @@
 package com.lluis.battleship;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,32 +15,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class AppController {
 
-    private PlayerRepository playerRepo;
-    private GameRepository gameRepo;
-    private GamePlayerRepository gamePlayerRepo;
-    private ShipRepository shipRepo;
-    private SalvoRepository salvoRepo;
-    private ScoreRepository scoreRepo;
-
     @Autowired
-    AppController(PlayerRepository playerRepo,
-                  GameRepository gameRepo,
-                  GamePlayerRepository gamePlayerRepo,
-                  ShipRepository shipRepo,
-                  SalvoRepository salvoRepo,
-                  ScoreRepository scoreRepo) {
-        this.playerRepo = playerRepo;
-        this.gameRepo = gameRepo;
-        this.gamePlayerRepo = gamePlayerRepo;
-        this.shipRepo = shipRepo;
-        this.salvoRepo = salvoRepo;
-        this.scoreRepo = scoreRepo;
-    }
-
-    @RequestMapping("/players")
-    public List<Player> getPlayers(){
-        return playerRepo.findAll();
-    }
+    private PlayerRepository playerRepo;
+    @Autowired
+    private GameRepository gameRepo;
+    @Autowired
+    private GamePlayerRepository gamePlayerRepo;
+    @Autowired
+    private ShipRepository shipRepo;
+    @Autowired
+    private SalvoRepository salvoRepo;
+    @Autowired
+    private ScoreRepository scoreRepo;
 
     @RequestMapping("/gamePlayers")
     public List<GamePlayer> getGamePlayers(){
@@ -55,7 +44,15 @@ public class AppController {
     }
 
     @RequestMapping("/games")
-    public List<Map> getGames(){
+    public Map<String, Object> getGames() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("player", getPlayerFromAuth(findPlayerFromAuth()));
+        dto.put("games", findGames());
+
+        return dto;
+    }
+
+    private List<Map> findGames() {
         return gameRepo.findAll()
                 .stream()
                 .map(game -> getGamesDTO(game))
@@ -70,6 +67,28 @@ public class AppController {
         dto.put("scores", findScores(game.getScores()));
 
         return dto;
+    }
+
+    private Player findPlayerFromAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String userName = authentication.getName();
+            return playerRepo.findByUserName(userName);
+        }else {
+            return null;
+        }
+    }
+
+    private Map<String, Object> getPlayerFromAuth(Player player) {
+        if (player != null) {
+            Map<String, Object> dto = new LinkedHashMap<>();
+            dto.put("id", player.getId());
+            dto.put("username", player.getUserName());
+
+            return dto;
+        }else {
+            return null;
+        }
     }
 
     private List<Map> findScores(Set<Score> scores) {
@@ -166,6 +185,25 @@ public class AppController {
         dto.put("location", ship.getLocations());
 
         return dto;
+    }
+
+    @RequestMapping(path = "/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createUser(@RequestParam String userName, @RequestParam String password) {
+        if (userName.isEmpty()) {
+            return new ResponseEntity<>(makeMap("error", "No name"), HttpStatus.FORBIDDEN);
+        }
+        Player player = playerRepo.findByUserName(userName);
+        if (player != null) {
+            return new ResponseEntity<>(makeMap("error", "Username already exists"), HttpStatus.CONFLICT);
+        }
+        Player newPlayer = playerRepo.save(new Player(userName, password));
+        return new ResponseEntity<>(makeMap("userName", newPlayer.getUserName()), HttpStatus.CREATED);
+    }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 }
 

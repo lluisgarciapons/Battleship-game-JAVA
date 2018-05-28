@@ -1,13 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Salvo!</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+
 </head>
 <body>
 <div>
     <div id="app-content">
-        <ol><li v-for="data in allData">
+    <div id="auth-buttons">
+        <div id="logout-success-alert" class="alert alert-dark" role="alert" style="display:none">
+            You logged out. ((fade it out))
+        </div>
+        <button type="button" id="login-btn" class="btn btn-outline-dark btn-sm" data-toggle="modal" data-target="#login-window" style="display:none">Log In</button>
+        <button type="button" id="signin-btn" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#signin-window" style="display:none">Sign In</button>
+        <button v-on:click="logout" type="button" id="logout-btn" class="btn btn-outline-secondary btn-sm" style="display:none">Log Out</button>
+    </div>
+    <div id="login-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginWindowLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginWindowLabel">LOG IN WITH YOUR ACCOUNT</h5>
+                </div>
+                <div id="login-modal-body" class="modal-body">
+                    <form id="login-form" class="">
+                        <div class="form-group">
+                            <label for="login-email-input">Email address</label>
+                            <input v-on:keyup.enter="login('login')" type="email" class="form-control" id="login-email-input" aria-describedby="emailHelp" placeholder="Enter email">
+                            <small id="login-emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password-input">Password</label>
+                            <input v-on:keyup.enter="login('login')" type="password" class="form-control" id="login-password-input" placeholder="Password">
+                        </div>
+                    </form>
+                    <div id="login-error-alert" class="alert alert-warning" role="alert" style="display:none">
+                        Wrong email or password. Please, try again.
+                    </div>
+                </div>
+                <div id="login-success-alert" class="alert alert-success" role="alert" style="display:none">
+                    You are now logged in!
+                </div>
+                <div class="modal-footer">
+                    <button v-on:click="login('login')" id="inner-login-btn" class="btn btn-outline-success btn-lg inner-btn">Log In</button>
+                    <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signin-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginWindowLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signinWindowLabel">SIGN IN WITH A NEW ACCOUNT</h5>
+                </div>
+                <div id="signin-modal-body" class="modal-body">
+                    <form id="signin-form" class="">
+                        <div class="form-group">
+                            <label for="signin-email-input">Email address</label>
+                            <input v-on:keyup.enter="signinverification" type="email" class="form-control" id="signin-email-input" aria-describedby="emailHelp" placeholder="Enter email">
+                            <small id="signin-emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="signin-password-input">Password</label>
+                            <input v-on:keyup.enter="signinverification" type="password" class="form-control" id="signin-password-input" placeholder="Enter Password (4 - 16 characters)">
+                        </div>
+                        <div class="form-group">
+                            <label for="signin-conf-password-input">Confirm Password</label>
+                            <input v-on:keyup.enter="signinverification" type="password" class="form-control" id="signin-conf-password-input" placeholder="Confirm Password">
+                        </div>
+                    </form>
+                    <div id="signin-already-error-alert" class="alert alert-warning" role="alert" style="display:none">
+                        Email already in use, try again.
+                    </div>
+                    <div id="signin-invalid-error-alert" class="alert alert-warning" role="alert" style="display:none">
+                        Invalid email, please try again.
+                    </div>
+                    <div id="signin-invalid-password-alert" class="alert alert-warning" role="alert" style="display:none">
+                        Invalid password, please try another one.
+                    </div>
+                </div>
+                <div id="signin-success-alert" class="alert alert-success" role="alert" style="display:none">
+                    You created a new account!
+                </div>
+                <div class="modal-footer">
+                    <button v-on:click="signinverification" id="inner-signin-btn" class="btn btn-outline-success btn-lg inner-btn">Sign In</button>
+                    <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <ol><li v-for="data in gamesData">
                 {{getDate(data)}}, {{data.gamePlayers["0"].player.username}} vs. {{getPlayerTwo(data)}}
             </li>
         </ol>
@@ -33,7 +123,11 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 <script src="js/games.js"></script>
 </body>

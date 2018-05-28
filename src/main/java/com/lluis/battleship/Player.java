@@ -24,10 +24,13 @@ public class Player {
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<Score> scores = new LinkedHashSet<>();
 
+    private String password;
+
     public Player() { }
 
-    public Player(String userName) {
+    public Player(String userName, String password) {
         this.userName = userName;
+        this.password = password;
     }
 
     public void addGamePlayer(GamePlayer gamePlayer) {
@@ -45,6 +48,15 @@ public class Player {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public long getId() {
