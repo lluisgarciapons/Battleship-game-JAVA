@@ -8,4 +8,5 @@ package com.lluis.battleship;
 
 @RepositoryRestResource
 public interface GamePlayerRepository extends JpaRepository<GamePlayer, Long> {
+        GamePlayer findById(long id);
 }

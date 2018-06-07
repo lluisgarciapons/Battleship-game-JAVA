@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Salvo!</title>
+    <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -11,16 +12,22 @@
 
 </head>
 <body>
-<div>
-    <div id="app-content">
-    <div id="auth-buttons">
-        <div id="logout-success-alert" class="alert alert-dark" role="alert" style="display:none">
-            You logged out. ((fade it out))
+<div id="all" class="games_body" style="display:none">
+
+    <div id="app-content" class="content">
+        <div id="auth-buttons" class="auth_buttons">
+            <div class="banner"><img src="styles/img/battleship_banner.png" alt="battleship banner"></div>
+            <div id="logout-success-alert" class="alert alert-dark" role="alert" style="display:none">
+                You logged out.
+            </div>
+            <button type="button" id="login-btn" class="btn btn-outline-light btn-sm" data-toggle="modal" data-target="#login-window" style="display:none">Log In</button>
+            <button type="button" id="signup-btn" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#signup-window" style="display:none">Sign Up</button>
+            <div id="after-login" style="display: none;">
+                <p id="hi-user"></p>
+                <button v-on:click="logout" type="button" id="logout-btn" class="btn btn-outline-secondary btn-sm">Log Out</button>
+            </div>
         </div>
-        <button type="button" id="login-btn" class="btn btn-outline-dark btn-sm" data-toggle="modal" data-target="#login-window" style="display:none">Log In</button>
-        <button type="button" id="signin-btn" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#signin-window" style="display:none">Sign In</button>
-        <button v-on:click="logout" type="button" id="logout-btn" class="btn btn-outline-secondary btn-sm" style="display:none">Log Out</button>
-    </div>
+
     <div id="login-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginWindowLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -44,7 +51,7 @@
                     </div>
                 </div>
                 <div id="login-success-alert" class="alert alert-success" role="alert" style="display:none">
-                    You are now logged in!
+                    Logged in successfully!
                 </div>
                 <div class="modal-footer">
                     <button v-on:click="login('login')" id="inner-login-btn" class="btn btn-outline-success btn-lg inner-btn">Log In</button>
@@ -54,72 +61,120 @@
         </div>
     </div>
 
-    <div id="signin-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginWindowLabel" aria-hidden="true">
+    <div id="signup-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginWindowLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="signinWindowLabel">SIGN IN WITH A NEW ACCOUNT</h5>
+                    <h5 class="modal-title" id="signupWindowLabel">SIGN IN WITH A NEW ACCOUNT</h5>
                 </div>
-                <div id="signin-modal-body" class="modal-body">
-                    <form id="signin-form" class="">
+                <div id="signup-modal-body" class="modal-body">
+                    <form id="signup-form" class="">
                         <div class="form-group">
-                            <label for="signin-email-input">Email address</label>
-                            <input v-on:keyup.enter="signinverification" type="email" class="form-control" id="signin-email-input" aria-describedby="emailHelp" placeholder="Enter email">
-                            <small id="signin-emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            <label for="signup-username-input">Username</label>
+                            <input v-on:keyup.enter="signupverification" type="text" class="form-control" id="signup-username-input" aria-describedby="emailHelp" placeholder="That will be your nickname">
                         </div>
                         <div class="form-group">
-                            <label for="signin-password-input">Password</label>
-                            <input v-on:keyup.enter="signinverification" type="password" class="form-control" id="signin-password-input" placeholder="Enter Password (4 - 16 characters)">
+                            <label for="signup-email-input">Email address</label>
+                            <input v-on:keyup.enter="signupverification" type="email" class="form-control" id="signup-email-input" aria-describedby="emailHelp" placeholder="Enter email">
+                            <small id="signup-emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                         </div>
                         <div class="form-group">
-                            <label for="signin-conf-password-input">Confirm Password</label>
-                            <input v-on:keyup.enter="signinverification" type="password" class="form-control" id="signin-conf-password-input" placeholder="Confirm Password">
+                            <label for="signup-password-input">Password</label>
+                            <input v-on:keyup.enter="signupverification" type="password" class="form-control" id="signup-password-input" placeholder="Enter Password (4 - 16 characters)">
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-conf-password-input">Confirm Password</label>
+                            <input v-on:keyup.enter="signupverification" type="password" class="form-control" id="signup-conf-password-input" placeholder="Confirm Password">
                         </div>
                     </form>
-                    <div id="signin-already-error-alert" class="alert alert-warning" role="alert" style="display:none">
-                        Email already in use, try again.
+                    <div id="signup-error-alert" class="alert alert-warning" role="alert" style="display:none">
+
                     </div>
-                    <div id="signin-invalid-error-alert" class="alert alert-warning" role="alert" style="display:none">
+                    <div id="signup-invalid-email-alert" class="alert alert-warning" role="alert" style="display:none">
                         Invalid email, please try again.
                     </div>
-                    <div id="signin-invalid-password-alert" class="alert alert-warning" role="alert" style="display:none">
+                    <div id="signup-invalid-username-alert" class="alert alert-warning" role="alert" style="display:none">
+                        Username must be between 1 and 28 characters.
+                    </div>
+                    <div id="signup-invalid-password-alert" class="alert alert-warning" role="alert" style="display:none">
                         Invalid password, please try another one.
                     </div>
                 </div>
-                <div id="signin-success-alert" class="alert alert-success" role="alert" style="display:none">
-                    You created a new account!
+                <div id="signup-success-alert" class="alert alert-success" role="alert" style="display:none">
+
                 </div>
                 <div class="modal-footer">
-                    <button v-on:click="signinverification" id="inner-signin-btn" class="btn btn-outline-success btn-lg inner-btn">Sign In</button>
+                    <button v-on:click="signupverification" id="inner-signup-btn" class="btn btn-outline-success btn-lg inner-btn">Sign Up</button>
                     <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-        <ol><li v-for="data in gamesData">
-                {{getDate(data)}}, {{data.gamePlayers["0"].player.username}} vs. {{getPlayerTwo(data)}}
-            </li>
-        </ol>
+        <!-- Modal -->
+        <div class="modal fade" id="unauthorized-modal" tabindex="-1" role="dialog" aria-labelledby="unauthorizedModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
 
-        <table>
-            <thead>
-                <th>Name</th>
-                <th>Total</th>
-                <th>Won</th>
-                <th>Lost</th>
-                <th>Tied</th>
-            </thead>
-            <tbody>
-                <tr v-for="player in players">
-                    <td> {{ player }} </td>
-                    <td> {{ findScores(player, "total") }} </td>
-                    <td> {{ findScores(player, "wins") }} </td>
-                    <td> {{ findScores(player, "loses") }} </td>
-                    <td> {{ findScores(player, "ties") }} </td>
-                </tr>
-            </tbody>
-        </table>
+                    <div class="modal-body">
+                        <div id="unauthorized-error-alert" class="alert alert-warning" role="alert">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tables_content">
+            <div class="games">
+                <table id="current-games" class="table">
+                    <thead>
+                    <th>Creation date</th>
+                    <th>Host</th>
+                    <th>Opponent</th>
+                    <th>Game status</th>
+                    </thead>
+                    <tbody>
+                    <tr v-for="game in gamesData">
+                        <td>{{getDate(game)}}</td>
+                        <td>{{game.gamePlayers["0"].player.username}}</td>
+                        <td v-html="getPlayerTwo(game)"></td>
+                        <td v-html="createButton(game)"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="new_game">
+                <button v-on:click="newGame" id="new-game-btn" class="new_game_btn">CREATE GAME</button>
+            </div>
+            <div class="leaderboard">
+                <h3>LEADERBOARD</h3>
+                <div class="leaderboard_table">
+                <table id="leaderboard" class="table">
+                    <thead>
+                    <th>Name</th>
+                    <th>Total</th>
+                    <th>Won</th>
+                    <th>Lost</th>
+                    <th>Tied</th>
+                    </thead>
+                    <tbody>
+                    <tr v-for="player in players">
+                        <td> {{ player }} </td>
+                        <td> {{ findScores(player, "total") }} </td>
+                        <td> {{ findScores(player, "wins") }} </td>
+                        <td> {{ findScores(player, "loses") }} </td>
+                        <td> {{ findScores(player, "ties") }} </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

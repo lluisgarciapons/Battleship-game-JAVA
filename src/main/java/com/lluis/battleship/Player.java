@@ -17,6 +17,7 @@ public class Player {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
     private String userName;
+    private String email;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new LinkedHashSet<>();
@@ -28,9 +29,10 @@ public class Player {
 
     public Player() { }
 
-    public Player(String userName, String password) {
+    public Player(String userName, String email, String password) {
         this.userName = userName;
         this.password = password;
+        this.email = email;
     }
 
     public void addGamePlayer(GamePlayer gamePlayer) {
@@ -48,6 +50,14 @@ public class Player {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @JsonIgnore

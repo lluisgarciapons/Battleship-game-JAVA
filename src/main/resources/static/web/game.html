@@ -3,27 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Ship Locations!</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 <body>
     <div id="players"></div>
     <div id="my-table">
-        <table class="table">
+        <table class="grid_table">
             <thead id="my-table-headers" class="table_headers"></thead>
             <tbody id="my-table-rows"></tbody>
         </table>
     </div>
 
     <div id="opp-table">
-        <table class="table">
+        <table class="grid_table">
             <thead id="op-table-headers" class="table_headers"></thead>
             <tbody id="op-table-rows"></tbody>
         </table>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="unauthorized-modal" tabindex="-1" role="dialog" aria-labelledby="unauthorizedModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <div id="unauthorized-error-alert" class="alert alert-warning" role="alert">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeErrorModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script src="js/game.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="js/game.js"></script>
 </body>
 </html>

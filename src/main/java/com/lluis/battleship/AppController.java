@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.function.ObjIntConsumer;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,7 +47,7 @@ public class AppController {
     @RequestMapping("/games")
     public Map<String, Object> getGames() {
         Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("player", getPlayerFromAuth(findPlayerFromAuth()));
+        dto.put("player", loggedPlayer());
         dto.put("games", findGames());
 
         return dto;
@@ -55,6 +56,9 @@ public class AppController {
     private List<Map> findGames() {
         return gameRepo.findAll()
                 .stream()
+                .sorted((a, b) -> {
+                    return (int)(b.getId() - a.getId());
+                })
                 .map(game -> getGamesDTO(game))
                 .collect(Collectors.toList());
     }
@@ -69,11 +73,15 @@ public class AppController {
         return dto;
     }
 
+    private Map<String, Object> loggedPlayer() {
+        return getPlayerFromAuth(findPlayerFromAuth());
+    }
+
     private Player findPlayerFromAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            String userName = authentication.getName();
-            return playerRepo.findByUserName(userName);
+            String username = authentication.getName();
+            return playerRepo.findByUserName(username);
         }else {
             return null;
         }
@@ -84,6 +92,7 @@ public class AppController {
             Map<String, Object> dto = new LinkedHashMap<>();
             dto.put("id", player.getId());
             dto.put("username", player.getUserName());
+            dto.put("email", player.getEmail());
 
             return dto;
         }else {
@@ -130,21 +139,34 @@ public class AppController {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", gamePlayer.getPlayer().getId());
         dto.put("username", gamePlayer.getPlayer().getUserName());
+        dto.put("email", gamePlayer.getPlayer().getEmail());
 
         return dto;
     }
 
-    @RequestMapping("/game_view/{nn}")
-    public Map<String, Object> getGameView(@PathVariable("nn") long id) {
-        GamePlayer gp = gamePlayerRepo.getOne(id);
-        Map<String, Object> selectedGame = new LinkedHashMap<>();
+    @RequestMapping("/game_view/{id}")
+    public ResponseEntity<Map<String, Object>> getGameView(@PathVariable long id) {
 
-        selectedGame.put("gameId", gp.getGame().getId());
-        selectedGame.put("gameCreated", gp.getGame().getCreationDate());
-        selectedGame.put("gamePlayers", findGamePlayer(gp.getGame().getGamePlayers()));
-        selectedGame.put("ships", findShipsDTO(gp.getShips()));
-        selectedGame.put("salvoes", getSalvoesDTO(findSalvoesDTO(gp.getGame().getGamePlayers())));
-         return selectedGame;
+        if (gamePlayerRepo.findById(id) != null) {
+            Long gpPlayerid = gamePlayerRepo.getOne(id).getPlayer().getId();
+            if(findPlayerFromAuth().getId() != gpPlayerid) {
+                return new ResponseEntity<> (makeMap("error", "Hey, are you trying to cheat? An automatic alert with" +
+                        " your IP and physical address has been sent to the authorities, SWAT are coming."), HttpStatus.UNAUTHORIZED);
+            }
+
+            GamePlayer gp = gamePlayerRepo.getOne(id);
+            Map<String, Object> selectedGame = new LinkedHashMap<>();
+
+            selectedGame.put("gameId", gp.getGame().getId());
+            selectedGame.put("gameCreated", gp.getGame().getCreationDate());
+            selectedGame.put("gamePlayers", findGamePlayer(gp.getGame().getGamePlayers()));
+            selectedGame.put("ships", findShipsDTO(gp.getShips()));
+            selectedGame.put("salvoes", getSalvoesDTO(findSalvoesDTO(gp.getGame().getGamePlayers())));
+            return new ResponseEntity<>(selectedGame, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(makeMap("error", "This page doesn't exist"), HttpStatus.NOT_FOUND);
+        }
+
     }
 
     private Set<Salvo> findSalvoesDTO(Set<GamePlayer> gamePlayers) {
@@ -188,16 +210,71 @@ public class AppController {
     }
 
     @RequestMapping(path = "/players", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> createUser(@RequestParam String userName, @RequestParam String password) {
+    public ResponseEntity<Map<String, Object>> createUser(@RequestParam String userName,
+                                                          @RequestParam String email,
+                                                          @RequestParam String password) {
         if (userName.isEmpty()) {
-            return new ResponseEntity<>(makeMap("error", "No name"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(makeMap("error", "no username provided."), HttpStatus.FORBIDDEN);
+        }
+        if (email.isEmpty()) {
+            return new ResponseEntity<>(makeMap("error", "no email provided."), HttpStatus.FORBIDDEN);
         }
         Player player = playerRepo.findByUserName(userName);
+        Player player1 = playerRepo.findByEmail(email);
         if (player != null) {
             return new ResponseEntity<>(makeMap("error", "Username already exists"), HttpStatus.CONFLICT);
         }
-        Player newPlayer = playerRepo.save(new Player(userName, password));
+        if (player1 != null) {
+            return new ResponseEntity<>(makeMap("error", "Email Already exists"), HttpStatus.CONFLICT);
+        }
+
+        Player newPlayer = playerRepo.save(new Player(userName, email, password));
         return new ResponseEntity<>(makeMap("userName", newPlayer.getUserName()), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> createGame(){
+        Map<String, Object> body;
+        HttpStatus status;
+        if (findPlayerFromAuth() != null) {
+            Player thisPlayer = findPlayerFromAuth();
+            Game newGame = gameRepo.save(new Game());
+            GamePlayer newGp = gamePlayerRepo.save(new GamePlayer(thisPlayer, newGame));
+            body = makeMap("gpid", newGp.getId());
+            status = HttpStatus.CREATED;
+        }  else {
+            body = makeMap("error", "You must Log In first!");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<>(body, status);
+    }
+
+    @RequestMapping(path = "/game/{nn}/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> joinGame (@PathVariable long nn) {
+        Map<String, Object> body;
+        HttpStatus status;
+        if (findPlayerFromAuth() != null) {
+            Player thisPlayer = findPlayerFromAuth();
+            if (gameRepo.findById(nn) != null) {
+                Game thisGame = gameRepo.getOne(nn);
+                if (thisGame.getGamePlayers().size() == 1) {
+                    GamePlayer newGp = gamePlayerRepo.save(new GamePlayer(thisPlayer, thisGame));
+                    body = makeMap("gpid", newGp.getId());
+                    status = HttpStatus.CREATED;
+                } else {
+                    body = makeMap("error", "Game is full.");
+                    status = HttpStatus.FORBIDDEN;
+                }
+            } else {
+                body = makeMap("error", "No such game.");
+                status = HttpStatus.FORBIDDEN;
+            }
+        } else {
+            body = makeMap("error", "No user found.");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
+        return new ResponseEntity<>(body, status);
     }
 
     private Map<String, Object> makeMap(String key, Object value) {

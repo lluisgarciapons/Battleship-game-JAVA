@@ -1,24 +1,269 @@
 body {
+    font-family: 'Arvo', serif;
+}
 
+.games_body {
+    height: 100vh;
+    background-image: url("img/battleship_background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .hidden {
     display: none;
 }
 
-.table,
-tr,
-td,
-th {
+.auth_buttons {
+    padding-right: 5%;
+    background-image: url("img/steel_pattern.jpg");
+    background-size: cover;
+    border-bottom: 2px groove #4b4b4b;
+}
+
+.auth_buttons,
+#after-login {
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+#after-login {
+    width: 400px;
+    justify-content: flex-end;
+}
+
+.banner {
+    width: 100%;
+}
+
+.banner > img {
+    margin-left: 5%;
+    height: 60px;
+}
+
+#hi-user {
+    margin: 0;
+}
+
+#logout-success-alert {
+    position: fixed;
+}
+
+.btn {
+    margin: 10px 5px;
+}
+
+.alert {
+    width: 100%;
+    text-align: center;
+}
+
+.games {grid-area: games;}
+.new_game {grid-area: btn;}
+.leaderboard {grid-area: leaderboard;}
+
+.tables_content {
+    /*display: flex;*/
+    /*justify-content: space-around;*/
+    max-height: 465px;
+    min-height: 465px;
+    overflow: hidden;
+    display: grid;
+    grid-template-areas:
+    'games games btn'
+    /*'games games btn'*/
+    /*'games games btn'*/
+    /*'games games leaderboard'*/
+    'games games leaderboard'
+    'games games leaderboard';
+    grid-gap: 5%;
+    margin: 5% 5% 0 5%;
+}
+
+.tables_content > div {
+    border-radius: 4px;
+    width: 100%;
+}
+
+.tables_content table {
+    border-bottom: 2px groove #4b4b4b;
+    background-color: rgba(202, 226, 227, 0.65);
+    margin-bottom: 0;
+}
+
+.games > table {
+    margin: auto;
+    text-align: center;
+}
+
+.games thead {
+    font-size: 20px;
+}
+
+.games tbody td {
+    text-align: center;
+    padding: 5px;
+    height: 30px;
+    box-sizing: content-box;
+}
+
+.games tbody button {
+    width: 120px;
+    margin: 0;
+}
+
+.only_one_player {
+    animation-name:waitingOpponentColor;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes waitingOpponentColor {
+    0% {
+        color: red;
+    }
+    50% {
+        color: white;
+    }
+    100% {
+        color: red;
+    }
+}
+
+.new_game {
+    background-image: url("img/Atomic-Explosion-Transparent-Background.png"), url("img/air-force-vector-101.png"), url("img/steel_background.jpg");
+    background-size: 110% 100%, cover, cover;
+    background-position: top, top, top;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    display: flex;
+}
+
+.new_game_btn {
+    font-size: 50px;
+    height: 70px;
+    width: 200px;
+    font-family: "Mesquite Std";
+}
+
+.enter_btn,
+.new_game_btn{
+    background: linear-gradient(#454545, rgba(144, 144, 144, 0.99));
+}
+
+.join_btn {
+    background: linear-gradient(#6ca9c6, #454545);
+}
+
+.new_game_btn,
+.enter_btn,
+.join_btn {
+    color: #d5d5d3;
+    text-align: center;
+    font-weight: normal;
+    margin: auto auto;
+    /*box-shadow: 3px 9px 6px #999;*/
+}
+
+.new_game_btn:active {
+    /*transform: translateY(4px);*/
+    background: linear-gradient(rgba(144, 144, 144, 0.99), #454545);
+    box-shadow: 3px 5px 6px #555447;
+}
+
+.new_game_btn:hover {
+    animation-name: newGameColor;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes newGameColor {
+    0% {
+        color: white;
+    }
+    50% {
+        color: rgba(0, 0, 0, 0.82);
+    }
+    100% {
+        color: white;
+    }
+}
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size: 13px;
+    margin: 0;
+}
+
+.leaderboard_table {
+    max-height: 223px; !important;
+    min-height: 223px;!important;
+
+}
+
+.leaderboard_table thead tr {
+    display: flex;
+}
+
+.games thead {
+    display: block;
+}
+
+.games thead tr th {
+    width: 20%;
+}
+
+.games tbody {
+    width: 100%;
+    display: block;
+    min-height: 200px;
+    max-height: 407px;
+    overflow-y: auto;
+}
+
+.games tbody tr td {
+    width: 10%;
+}
+
+.leaderboard_table thead th {
+    justify-content: space-evenly;
+    width: 20%;
+}
+
+.leaderboard_table tbody {
+    max-height: 176px;
+    display: block;
+    overflow-y: auto; !important;
+}
+
+.leaderboard_table tbody td {
+    width: 10%;
+}
+
+.leaderboard > h3 {
+    border-radius: 4px;
+    /*font-family: "Felix Titling";*/
+    background-color: rgba(108, 108, 107, 0.68);
+    text-decoration: underline;
+}
+
+.leaderboard tr td:nth-child(2){
+    font-weight: bold;
+}
+
+.grid_table,
+.grid_table td{
     border: 1px solid black;
     border-collapse: collapse;
 }
 
-tr,
-th,
-td {
-    width: 20px;
-    height: 20px;
+.grid_table tr,
+.grid_table th,
+.grid_table td {
+    box-sizing: content-box;
+    width: 25px;
+    height: 25px;
     text-align: center;
 }
 
@@ -39,5 +284,5 @@ td {
 }
 
 .wrong_conf_pass {
-    background-color: rgba(178, 40, 0, 0.53);
+    background-color: rgba(250, 101, 50, 0.52);
 }

@@ -11,7 +11,7 @@ function printMyTable(who){
 
     for(var i = 0; i < 11; i++) {
         var tr = document.createElement("tr");
-        tr.setAttribute("class", "row");
+        tr.setAttribute("class", "trow");
 
         if (i == 0) {
             for (k = 0; k < 11; k++) {
@@ -27,7 +27,7 @@ function printMyTable(who){
         } else {
             for(var j = 0; j < 11; j++){
                 var td = document.createElement("td");
-                td.setAttribute("class", "cell");
+                td.setAttribute("class", "tcell");
                 td.setAttribute("id", String.fromCharCode(64 + i) + j + who);
                 tr.append(td);
                 if (j == 0){
@@ -58,6 +58,11 @@ function urlCall() {
                 printSalvoes(gameData, "my");
                 printSalvoes(gameData, "op");
             }
+        },
+        error: function (json) {
+            console.log(json);
+            $("#unauthorized-error-alert").text(json.responseJSON.error);
+            $("#unauthorized-modal").modal("show");
         }
     })
 }
@@ -142,5 +147,10 @@ function printSalvoes(gameData, who) {
             }
         }
     }
+}
+
+function closeErrorModal() {
+   $("#unauthorized-window").modal("hide");
+    window.history.back();
 }
 

@@ -44,10 +44,10 @@ public class BattleshipApplication {
                                       ScoreRepository scoreRepository) {
 		return (args) -> {
 
-            Player player1 = new Player("j.bauer@ctu.gov", "24");
-            Player player2 = new Player("c.obrian@ctu.gov", "42");
-            Player player3 = new Player("kim_bauer@gmail.com", "kb");
-            Player player4 = new Player("t.almeida@ctu.gov", "mole");
+            Player player1 = new Player("Bauer24", "j.bauer@ctu.gov", "24");
+            Player player2 = new Player("ZerO-brian", "c.obrian@ctu.gov", "42");
+            Player player3 = new Player("Kimbi", "kim_bauer@gmail.com", "kb");
+            Player player4 = new Player("xXalmeXx", "t.almeida@ctu.gov", "mole");
 
 			playerRepository.save(player1);
 			playerRepository.save(player2);
@@ -275,7 +275,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(inputName-> {
-            Player player = playerRepository.findByUserName(inputName);
+            Player player = playerRepository.findByEmail(inputName);
             if (player != null) {
                 return new User(player.getUserName(), player.getPassword(),
                         AuthorityUtils.createAuthorityList("USER"));
@@ -300,7 +300,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().fullyAuthenticated();
 
         http.formLogin()
-                .usernameParameter("userName")
+                .usernameParameter("email")
                 .passwordParameter("password")
                 .loginPage("/api/login");
 
