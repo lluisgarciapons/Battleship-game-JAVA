@@ -13,11 +13,18 @@ body {
     display: none;
 }
 
-.auth_buttons {
-    padding-right: 5%;
+.header {
+    display: flex;
+    justify-content: space-between;
     background-image: url("img/steel_pattern.jpg");
     background-size: cover;
     border-bottom: 2px groove #4b4b4b;
+}
+
+.auth_buttons {
+    width: 50%;
+    justify-content: flex-end;
+    margin-right: 5%;
 }
 
 .auth_buttons,
@@ -28,16 +35,16 @@ body {
 }
 
 #after-login {
-    width: 400px;
+    width: 50%;
     justify-content: flex-end;
 }
 
 .banner {
-    width: 100%;
+    width: 50%;
+    margin-left: 5%;
 }
 
-.banner > img {
-    margin-left: 5%;
+.banner img {
     height: 60px;
 }
 
@@ -56,6 +63,26 @@ body {
 .alert {
     width: 100%;
     text-align: center;
+}
+
+#players {
+    display: flex;
+    /*justify-content: space-around;*/
+    color: #d5d5d3;
+}
+
+.player {
+    display: flex;
+    justify-content: center;
+    width: 33.3%;
+}
+
+#user {
+    justify-content: flex-end;
+}
+
+#opponent {
+    justify-content: flex-start;
 }
 
 .games {grid-area: games;}
@@ -97,6 +124,7 @@ body {
 }
 
 .games thead {
+    background-color: rgba(202, 226, 227, 0.65);
     font-size: 20px;
 }
 
@@ -136,6 +164,8 @@ body {
     background-position: top, top, top;
     background-repeat: no-repeat, no-repeat, no-repeat;
     display: flex;
+    border-bottom: 2px groove #4b4b4b;
+    border-right: 2px groove #4b4b4b;
 }
 
 .new_game_btn {
@@ -196,6 +226,13 @@ body {
     margin: 0;
 }
 
+.leaderboard img {
+    margin-bottom: 5px;
+    align-self: flex-end;
+    height: 30px;
+    width: 180px;
+}
+
 .leaderboard_table {
     max-height: 223px; !important;
     min-height: 223px;!important;
@@ -227,6 +264,7 @@ body {
 }
 
 .leaderboard_table thead th {
+    background-color: rgba(202, 226, 227, 0.65);
     justify-content: space-evenly;
     width: 20%;
 }
@@ -252,35 +290,288 @@ body {
     font-weight: bold;
 }
 
+
+
+
+/*GAME*/
+
+.game_body {
+    min-height: 100vh;
+    background-image: url("img/164053222-battleship-wallpapers.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#game-display {
+    display: flex;
+    align-items: center;
+    height: 400px;
+}
+
+#place-ships {
+    margin-top: 24px;
+}
+
 .grid_table,
 .grid_table td{
-    border: 1px solid black;
+    font-family: Playbill;
+    font-size: 20px;
     border-collapse: collapse;
 }
 
-.grid_table tr,
 .grid_table th,
 .grid_table td {
-    box-sizing: content-box;
-    width: 25px;
-    height: 25px;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
     text-align: center;
+
+}
+
+.tcell {
+    /*border-radius: 10px;*/
+    border: 1px solid #c7c7c7;
+    background-color: rgba(75, 75, 75, 0.69);
+}
+
+.grid_table tr td:first-child {
+    border-radius: 0;
+    border: 0;
+    display: none;
+}
+
+.grid_table tr:first-child th:first-child{
+    border-top-left-radius: 10px;
+}
+
+.grid_table tr:first-child th:last-child{
+    border-top-right-radius: 10px;
+}
+
+.grid_table tr:last-child td:first-child{
+    border-bottom-left-radius: 10px;
+}
+
+#my-table,
+#opp-table {
+    display: flex;
+    justify-content: center;
 }
 
 .table_headers {
-    background-color: rgba(145, 255, 243, 0.69);
+    background-color: rgba(46, 56, 75, 0.88);
+    display: none;
+}
+
+.grid_table {
+    /*background-image: url("");*/
+    background-size: cover;
+
+}
+
+.missile {
+    margin: 10px 0;
+    height: 30px;
+    width: 100px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.missile1 {
+    background-image: url("img/missile1.png");
+}
+
+.missile2 {
+    background-image: url("img/missile2.png");
+}
+
+.fire_button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    height: 100%;
+}
+
+.shoot_button,
+.shoot_button:active {
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    background-image: url("img/dragon_radar.gif") !important;
+    background-size: 118%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.shoot_button:active p {
+    color: #aa2821 !important;
+}
+
+.fire_button p {
+    font-family: "Courier New";
+    color: #aaa224;
+    font-weight: bold;
+}
+
+.p_fire {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.p_missile {
+    font-size: 15px;
+    margin: 5px 0 0 0;
+}
+
+.ships {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .ship {
-    background-color: darkgrey;
+    background-color: gray;
+    border: 2px solid white;
+}
+
+.carrier {
+    width: 250px;
+    height: 50px;
+}
+
+.battleship {
+    width: 200px;
+    height: 50px;
+}
+
+.submarine {
+    width: 150px;
+    height: 50px;
+}
+
+.destroyer {
+    width: 150px;
+    height: 50px;
+}
+
+.patrolboat {
+    width: 100px;
+    height: 50px;
+}
+
+.used {
+    background-color: black;
+}
+
+.selected {
+    border: 2px dotted #b4b4b4;
+}
+
+.highlighted {
+    background-color: #9be89b;
+}
+
+.target {
+    background-image: url("img/target001.gif");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.conflict {
+    background-color: indianred;
+}
+
+/*.placed_ship {*/
+    /*background-color: darkslategray;*/
+/*}*/
+
+.hovered {
+    background-color: #292929;
+}
+
+.hovered_ship {
+    animation-name: hoveredShip;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes hoveredShip {
+    0% {
+        background-color: darkgray;
+    }
+    50% {
+        background-color: rgb(92, 221, 52);
+    }
+    100% {
+        background-color: darkgray;
+    }
+}
+
+.highlight_replace {
+    animation-name: replaceSalvo;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes replaceSalvo {
+    0% {
+        background-size: 100%;
+    }
+    25% {
+        background-size: 65%;
+    }
+    50% {
+        background-size: 175%;
+    }
+    75% {
+        background-size: 65%;
+    }
+    100% {
+        background-size: 100%;
+    }
+}
+
+.placed_ship {
+    /*background-image: url("img/steel_pattern.jpg");*/
+    /*background-size: 200px;*/
+    /*background-position: center;*/
+    background-color: darkgrey !important;
 }
 
 .hit {
-    background-color: darkred;
+    /*background-image: url("img/explosion_hit.gif");*/
+    background-image: url("img/fire-png-gif--489.gif");
+    background-size: cover;
+    background-position: center;
+    background-color: darkred !important;
+    border: 1px solid #c7c7c7;
 }
 
 .miss {
-    background-color: dodgerblue;
+    /*background-image: url("img/water_waves.png");*/
+    background-image: url("img/water2.gif");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-color: dodgerblue !important;
+}
+
+.shot {
+    background-image: url("img/8bitbomb.gif");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(194,227,216,0.5);
+}
+
+.target {
+    /*background-color: blue;*/
+    background-image: url("img/target001.gif") !important;
 }
 
 .wrong_conf_pass {

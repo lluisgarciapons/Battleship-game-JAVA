@@ -209,6 +209,21 @@ public class AppController {
         return dto;
     }
 
+    private GamePlayer whoIsTheHost(Game game) {
+        GamePlayer host;
+        Set<GamePlayer> gamePlayers = game.getGamePlayers();
+        List<GamePlayer> bothGamePlayers = new LinkedList<>();
+        for (GamePlayer gamePlayer : gamePlayers) {
+            bothGamePlayers.add(gamePlayer);
+        }
+        if (bothGamePlayers.get(0).getId() < bothGamePlayers.get(1).getId()){
+            host = bothGamePlayers.get(0);
+        } else {
+            host = bothGamePlayers.get(1);
+        }
+        return host;
+    }
+
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> createUser(@RequestParam String userName,
                                                           @RequestParam String email,
@@ -258,9 +273,14 @@ public class AppController {
             if (gameRepo.findById(nn) != null) {
                 Game thisGame = gameRepo.getOne(nn);
                 if (thisGame.getGamePlayers().size() == 1) {
-                    GamePlayer newGp = gamePlayerRepo.save(new GamePlayer(thisPlayer, thisGame));
-                    body = makeMap("gpid", newGp.getId());
-                    status = HttpStatus.CREATED;
+                    if (!thisGame.getPlayers().contains(thisPlayer)) {
+                        GamePlayer newGp = gamePlayerRepo.save(new GamePlayer(thisPlayer, thisGame));
+                        body = makeMap("gpid", newGp.getId());
+                        status = HttpStatus.CREATED;
+                    } else {
+                        body = makeMap("error", "You are already in this game.");
+                        status = HttpStatus.FORBIDDEN;
+                    }
                 } else {
                     body = makeMap("error", "Game is full.");
                     status = HttpStatus.FORBIDDEN;
@@ -274,6 +294,81 @@ public class AppController {
             status = HttpStatus.UNAUTHORIZED;
         }
 
+        return new ResponseEntity<>(body, status);
+    }
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> placeShips (@PathVariable long gamePlayerId,
+                                                           @RequestBody List<Ship> ships) {
+        System.out.println(ships);
+        Map<String, Object> body;
+        HttpStatus status;
+        Player thisPlayer = findPlayerFromAuth();
+        if (thisPlayer != null) {
+            GamePlayer gp = gamePlayerRepo.findOne(gamePlayerId);
+            if (gp != null) {
+                if (gp.getPlayer().getId() == thisPlayer.getId()) {
+                    if (gp.getShips().size() == 0) {
+                        for (Ship ship : ships) {
+                            ship.setGamePlayer(gp);
+                            shipRepo.save(ship);
+                        }
+                        body = makeMap("success", "All ships placed.");
+                        status = HttpStatus.CREATED;
+                    } else {
+                        body = makeMap("error", "You have already placed your ships.");
+                        status = HttpStatus.FORBIDDEN;
+                    }
+                } else {
+                    body = makeMap("error", "You are not allowed see other player's ship locations.");
+                    status = HttpStatus.UNAUTHORIZED;
+                }
+            } else {
+                body = makeMap("error", "No game player with that Id.");
+                status = HttpStatus.UNAUTHORIZED;
+            }
+        } else {
+            body = makeMap("error", "No current user logged in.");
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<>(body, status);
+    }
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvoes", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> shotSalvoes (@PathVariable long gamePlayerId,
+                                                            @RequestBody Salvo salvo) {
+        Map<String, Object> body;
+        HttpStatus status;
+        Player thisPlayer = findPlayerFromAuth();
+        if (thisPlayer != null) {
+            GamePlayer gp = gamePlayerRepo.findOne(gamePlayerId);
+            if (gp != null) {
+                if (gp.getPlayer().getId() == thisPlayer.getId()) {
+                    if (salvo.getLocations().size() <= 5) {
+                        GamePlayer host = whoIsTheHost(gp.getGame());
+                        int turn = gp.getSalvoes().size() + 1;
+
+                        salvo.setGamePlayer(gp);
+                        salvo.setTurn(turn);
+                        salvoRepo.save(salvo);
+                        body = makeMap("success", "salvoes shot.");
+                        status = HttpStatus.CREATED;
+                    } else {
+                        body = makeMap("error", "Too many shots.");
+                        status = HttpStatus.FORBIDDEN;
+                    }
+                } else {
+                    body = makeMap("error", "You are not allowed see other player's view.");
+                    status = HttpStatus.UNAUTHORIZED;
+                }
+            } else {
+                body = makeMap("error", "No game player with that Id.");
+                status = HttpStatus.UNAUTHORIZED;
+            }
+        } else {
+            body = makeMap("error", "No current user logged in.");
+            status = HttpStatus.UNAUTHORIZED;
+        }
         return new ResponseEntity<>(body, status);
     }
 

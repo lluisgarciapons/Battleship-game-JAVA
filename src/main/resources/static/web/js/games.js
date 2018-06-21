@@ -8,7 +8,8 @@ $(document).ready(function() {
             allData: "",
             gamesData: "",
             players: [],
-            myId: ""
+            myId: "",
+            sortedByScores: []
         },
 
         created: function() {
@@ -35,6 +36,7 @@ $(document).ready(function() {
                         }
                         app.findPlayers();
                         app.checkIfLogIn();
+                        app.makeSortedScoresObj();
                     }
                 });
             },
@@ -71,6 +73,48 @@ $(document).ready(function() {
                 console.log(this.players);
             },
 
+            makeSortedScoresObj: function () {
+                var sortable = [];
+              for (var index in this.players) {
+                  var player = this.players[index];
+                sortable.push({
+                    "player": player,
+                    "total": this.findScores(player, "total"),
+                    "wins": this.findScores(player, "wins"),
+                    "loses": this.findScores(player, "loses")
+                });
+              }
+              sortable.sort(function(a, b){
+                  var result = b.total - a.total;
+                  if (result === 0){
+                      result = b.wins - a.wins;
+                      if (result === 0) {
+                          result = a.loses - b.loses;
+                      }
+                  }
+                  return result;
+              });
+
+              // for (var i=0; i < sortable.length; i++) {
+              //     var wholePlayer = sortable[i];
+              //     if (i >= 1) {
+              //         if (sortable[i][1] == sortable[i-1][1]) {
+              //             if (sortable[i][2] > sortable[i-1][2]){
+              //                 sortable[i] = sortable [i-1];
+              //                 sortable[i-1] = wholePlayer;
+              //             }
+              //         }
+              //     }
+              // }
+
+              for (var i=0; i < sortable.length; i++) {
+                  var thisPlayer = sortable[i].player;
+                  this.sortedByScores.push(thisPlayer);
+              }
+              console.log(sortable);
+              console.log(this.sortedByScores);
+            },
+
             findScores: function(thisPlayer, what) {
                 var total = 0.0;
                 var wins = 0;
@@ -82,15 +126,15 @@ $(document).ready(function() {
                     var scores = this.gamesData[index].scores;
                     for (var each in gamePlayer) {
                         var playerUsername = gamePlayer[each].player.username;
-                        if (playerUsername == thisPlayer) {
+                        if (playerUsername === thisPlayer) {
                             var playerId = gamePlayer[each].player.id;
                             if (this.gamesData[index].hasOwnProperty("scores")) {
                                 for (score in scores) {
-                                    if (scores[score].playerId == playerId) {
+                                    if (scores[score].playerId === playerId) {
                                         total += scores[score].score;
-                                        if (scores[score].score == 1) {
+                                        if (scores[score].score === 1) {
                                             wins++;
-                                        }else if (scores[score].score == 0.5) {
+                                        }else if (scores[score].score === 0.5) {
                                             ties++;
                                         }else {
                                             loses++;
@@ -287,7 +331,7 @@ $(document).ready(function() {
                         $("#unauthorized-error-alert").text(json.responseJSON.error);
                         $("#unauthorized-modal").modal("show");
                     })
-            },
+            }
         }
     });
 });

@@ -3,27 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <title>Ship Locations!</title>
+    <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/b4style.css">
     <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 <body>
-    <div id="players"></div>
-    <div id="my-table">
-        <table class="grid_table">
-            <thead id="my-table-headers" class="table_headers"></thead>
-            <tbody id="my-table-rows"></tbody>
-        </table>
+    <div class="game_body">
+
+        <div class="header">
+            <div class="banner"><a href="games.html"><img src="styles/img/battleship_banner.png" alt="battleship banner"></a></div>
+                <div id="auth-buttons" class="auth_buttons">
+                <div id="after-login">
+                    <p id="hi-user"></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="players" style="display: none;">
+            <span id="user" class="player"></span>
+            <span class="player">~ ~ Vs. ~ ~</span>
+            <span id="opponent" class="player"></span>
+        </div>
+
+    <div class="grids container">
+        <div id="game-display" class="row  justify-content-md-center" style="display:none">
+            <div id="my-table" class="col-sm-5">
+                <table class="grid_table">
+                    <thead id="my-table-headers" class="table_headers"></thead>
+                    <tbody id="my-table-rows"></tbody>
+                </table>
+            </div>
+
+            <div id="enter-salvo" class="col-sm-1 fire_button">
+                <div id="shot1" class="missile missile1"></div>
+                <div id="shot2" class="missile missile1"></div>
+                <div id="shot3" class="missile missile1"></div>
+                <div id="shot4" class="missile missile1"></div>
+                <div id="shot5" class="missile missile1"></div>
+                <button id="postShots" class="btn shoot_button" onclick="postShots()"><p class="p_fire">FIRE</p><p class="p_missile">MISSILES</p></button>
+            </div>
+
+            <div id="opp-table" class="col-sm-5">
+                <table class="grid_table">
+                    <thead id="op-table-headers" class="table_headers"></thead>
+                    <tbody id="op-table-rows"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <div id="opp-table">
-        <table class="grid_table">
-            <thead id="op-table-headers" class="table_headers"></thead>
-            <tbody id="op-table-rows"></tbody>
-        </table>
+    <div id="place-ships" class="container">
+        <div class="row  justify-content-md-center">
+        <div id="pl-table" class="col-sm-6">
+            <table class="grid_table">
+                <thead id="pl-table-headers" class="table_headers"></thead>
+                <tbody id="pl-table-rows"></tbody>
+            </table>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group" style="display: none">
+            <span class="switch">
+            <label for="switch-normal">Horizontal</label>
+            <input type="checkbox" class="switch" id="switch-normal">
+            <label for="switch-normal">Vertical</label>
+              </span>
+            </div>
+
+            <div id="done">
+                <button id="retrieveDataButton" onclick="retrieveData()" disabled>DONE!</button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="ships">
+                <div id="ship1" data-ship class="ship carrier" data-orientation="horizontal" data-type="Carrier" data-h="1" data-w="5"></div>
+                <div id="ship2" data-ship class="ship battleship" data-orientation="horizontal" data-type="Battleship" data-h="1" data-w="4"></div>
+                <div id="ship3" data-ship class="ship submarine" data-orientation="horizontal" data-type="Submarine" data-h="1" data-w="3"></div>
+                <div id="ship4" data-ship class="ship destroyer" data-orientation="horizontal" data-type="Destroyer" data-h="1" data-w="3"></div>
+                <div id="ship5" data-ship class="ship patrolboat" data-orientation="horizontal" data-type="Patrol Boat" data-h="1" data-w="2"></div>
+            </div>
+        </div>
+        </div>
     </div>
 
-    <!-- Modal -->
+
+    <!-- Modal alert -->
     <div class="modal fade" id="unauthorized-modal" tabindex="-1" role="dialog" aria-labelledby="unauthorizedModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -40,11 +105,48 @@
         </div>
     </div>
 
+    <!-- Modal error -->
+    <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <div id="error-alert" class="alert alert-warning" role="alert">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Warning modal -->
+    <div class="modal fade" id="warning-modal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <div id="warning-alert" class="alert alert-dark" role="alert">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-success" data-dismiss="modal" onclick="sendShots()">Accept</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="js/shootSalvoes.js"></script>
+    <script src="js/placingShips.js"></script>
     <script src="js/game.js"></script>
 </body>
 </html>

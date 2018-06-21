@@ -1,9 +1,13 @@
 var myId;
 var opId;
+var user;
 
 $(document).ready(function() {
     printMyTable("my");
     printMyTable("op");
+    printMyTable("pl");
+    shipListeners();
+    salvoListeners();
     urlCall();
 })
 
@@ -28,7 +32,11 @@ function printMyTable(who){
             for(var j = 0; j < 11; j++){
                 var td = document.createElement("td");
                 td.setAttribute("class", "tcell");
-                td.setAttribute("id", String.fromCharCode(64 + i) + j + who);
+                if (who == "pl") {
+                    td.setAttribute("id", String.fromCharCode(64 + i) + j);
+                } else {
+                    td.setAttribute("id", String.fromCharCode(64 + i) + j + who);
+                }
                 tr.append(td);
                 if (j == 0){
                     td.innerHTML = String.fromCharCode(64 + i);
@@ -51,10 +59,15 @@ function urlCall() {
             var gameData = json;
 
             myId = getKey("gp");
-            printShipLocations(gameData);
+            if(gameData.ships != 0) {
+                $("#game-display, #players").show();
+                $("#place-ships").hide();
+                printShipLocations(gameData);
+            }
             userVsOpponent(gameData);
             if (gameData.gamePlayers.length == 2) {
-                getOpponentId(gameData, myId);
+                getUser(gameData);
+                getOpponentId(gameData);
                 printSalvoes(gameData, "my");
                 printSalvoes(gameData, "op");
             }
@@ -67,7 +80,21 @@ function urlCall() {
     })
 }
 
-function getOpponentId(gameData, myId) {
+function updateData() {
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: '/api/game_view/' + getKey("gp"),
+
+        success: function (json) {
+            console.log(json);
+            var gameData = json;
+            printShipLocations(gameData);
+        }
+    });
+}
+
+function getOpponentId(gameData) {
         if (gameData.gamePlayers[0].id != myId) {
             opId = (gameData.gamePlayers[0].id).toString();
         }else {
@@ -90,9 +117,18 @@ function printShipLocations(gameData) {
             var cell = ships[ship].location[j];
             console.log(cell);
             var selCell = "#" + cell + "my";
-            $(selCell)[0].setAttribute("class", "ship");
+            $(selCell)[0].setAttribute("class", "placed_ship");
         }
     }
+}
+
+function getUser(gameData) {
+    if (gameData.gamePlayers[0].id == myId) {
+        user = gameData.gamePlayers[0].player.username;
+    } else {
+        user = gameData.gamePlayers[1].player.username;
+    }
+    $("#hi-user").append(user);
 }
 
 function userVsOpponent(gameData) {
@@ -112,7 +148,8 @@ function userVsOpponent(gameData) {
         }
     }
 
-    $("#players").append(user + " Vs. " + opponent);
+    $("#user").append(user);
+    $("#opponent").append(opponent);
     console.log(user, opponent);
 }
 
@@ -138,7 +175,7 @@ function printSalvoes(gameData, who) {
             for (var i = 0; i < shots.length; i++) {
                 var shot = shots[i];
                 var cell = "#" + shot + against;
-                if ($(cell).hasClass("ship")) {
+                if ($(cell).hasClass("placed_ship")) {
                     $(cell).addClass("hit");
                 } else {
                     $(cell).addClass("miss");
@@ -154,3 +191,39 @@ function closeErrorModal() {
     window.history.back();
 }
 
+function postShips (ships) {
+    $.post({url: "/api/games/players/" + getKey("gp") + "/ships",
+        data: JSON.stringify( ships
+        //     [{
+        //     type: "destroyer",
+        //     locations: ["H2", "H4", "H3"]
+        // },
+        // {
+        //     type: "Submarine",
+        //     locations: ["A1", "A2", "A3"]
+        // }]
+        ),
+        dataType: "text",
+        contentType: "application/json"
+    })
+        .done(function(json){
+            console.log("good", json);
+            })
+        .fail(function(json) {
+            console.log("bad", json);
+        })
+}
+
+function postSalvoes (salvo) {
+    $.post({url: "/api/games/players/" + getKey("gp") + "/salvoes",
+    data: JSON.stringify(salvo),
+    dataType: "text",
+    contentType: "application/json"
+    })
+        .done(function(json) {
+            console.log("good", json);
+        })
+        .fail(function(json) {
+            console.log("bad", json);
+        })
+}
