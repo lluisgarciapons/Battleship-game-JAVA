@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.function.ObjIntConsumer;
+import java.util.function.ObjLongConsumer;
 import java.util.stream.Collectors;
 
 @RestController
@@ -147,21 +147,22 @@ public class AppController {
     @RequestMapping("/game_view/{id}")
     public ResponseEntity<Map<String, Object>> getGameView(@PathVariable long id) {
 
-        if (gamePlayerRepo.findById(id) != null) {
-            Long gpPlayerid = gamePlayerRepo.getOne(id).getPlayer().getId();
-            if(findPlayerFromAuth().getId() != gpPlayerid) {
+        GamePlayer gp = gamePlayerRepo.getOne(id);
+        if (gp != null) {
+            Long gpPlayerId = gp.getPlayer().getId();
+            if(findPlayerFromAuth().getId() != gpPlayerId) {
                 return new ResponseEntity<> (makeMap("error", "Hey, are you trying to cheat? An automatic alert with" +
                         " your IP and physical address has been sent to the authorities, SWAT are coming."), HttpStatus.UNAUTHORIZED);
             }
 
-            GamePlayer gp = gamePlayerRepo.getOne(id);
             Map<String, Object> selectedGame = new LinkedHashMap<>();
 
             selectedGame.put("gameId", gp.getGame().getId());
             selectedGame.put("gameCreated", gp.getGame().getCreationDate());
             selectedGame.put("gamePlayers", findGamePlayer(gp.getGame().getGamePlayers()));
             selectedGame.put("ships", findShipsDTO(gp.getShips()));
-            selectedGame.put("salvoes", getSalvoesDTO(findSalvoesDTO(gp.getGame().getGamePlayers())));
+            selectedGame.put("salvoes", getSalvoesDTO(findSalvoes(gp.getGame().getGamePlayers())));
+            selectedGame.put("hitsAndSinks", getHitsDTO(gp.getGame().getGamePlayers()));
             return new ResponseEntity<>(selectedGame, HttpStatus.OK);
         }else {
             return new ResponseEntity<>(makeMap("error", "This page doesn't exist"), HttpStatus.NOT_FOUND);
@@ -169,7 +170,53 @@ public class AppController {
 
     }
 
-    private Set<Salvo> findSalvoesDTO(Set<GamePlayer> gamePlayers) {
+    private Map<Integer, Map<Long, Object>> getHitsDTO(Set<GamePlayer> gamePlayers) {
+        Map<Integer, Map<Long, Object>> dto = new LinkedHashMap<>();
+        Map<Long, Object> innerDTO;
+        Set<Salvo> salvoes = findSalvoes(gamePlayers);
+        for (Salvo salvo : salvoes) {
+            if (!dto.containsKey(salvo.getTurn())) {
+                innerDTO = new LinkedHashMap<>();
+                innerDTO.put(salvo.getGamePlayer().getId(), hitsDTO(salvo, gamePlayers));
+                dto.put(salvo.getTurn(), innerDTO);
+            } else {
+                innerDTO = dto.get(salvo.getTurn());
+                innerDTO.put(salvo.getGamePlayer().getId(), hitsDTO(salvo, gamePlayers));
+            }
+        }
+        return dto;
+    }
+
+    private Map<String, String> hitsDTO(Salvo salvo, Set<GamePlayer> gamePlayers) {
+        Map<String, String> dto = new LinkedHashMap<>();
+        GamePlayer opponent = getOpponent(gamePlayers, salvo.getGamePlayer().getId());
+
+        for (String shot : salvo.getLocations()) {
+            for (Ship ship : opponent.getShips()) {
+                for (String shipLocation : ship.getLocations()) {
+                    if (shot == shipLocation) {
+                        dto.put(shot, ship.getType());
+                    }
+                }
+            }
+        }
+        return dto;
+    }
+
+    private GamePlayer getOpponent(Set<GamePlayer> gamePlayers, Long gpId) {
+        GamePlayer opponent = null;
+        for (GamePlayer gamePlayer : gamePlayers) {
+            if (gamePlayer.getId() != gpId){
+                opponent = gamePlayer;
+                break;
+            } else {
+                opponent = null;
+            }
+        }
+        return opponent;
+    }
+
+    private Set<Salvo> findSalvoes(Set<GamePlayer> gamePlayers) {
         return gamePlayers
                 .stream()
                 .map(gamePlayer -> gamePlayer.getSalvoes())
@@ -345,7 +392,7 @@ public class AppController {
             if (gp != null) {
                 if (gp.getPlayer().getId() == thisPlayer.getId()) {
                     if (salvo.getLocations().size() <= 5) {
-                        GamePlayer host = whoIsTheHost(gp.getGame());
+//                        GamePlayer host = whoIsTheHost(gp.getGame());
                         int turn = gp.getSalvoes().size() + 1;
 
                         salvo.setGamePlayer(gp);

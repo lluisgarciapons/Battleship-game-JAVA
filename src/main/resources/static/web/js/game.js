@@ -113,11 +113,13 @@ function printShipLocations(gameData) {
     var ships = gameData.ships;
     console.log(ships);
     for (var ship in ships) {
+        var type = ships[ship].type;
         for (var j = 0; j < ships[ship].location.length; j++) {
             var cell = ships[ship].location[j];
             console.log(cell);
             var selCell = "#" + cell + "my";
             $(selCell)[0].setAttribute("class", "placed_ship");
+            $(selCell)[0].setAttribute("data-type", type);
         }
     }
 }
@@ -175,7 +177,7 @@ function printSalvoes(gameData, who) {
             for (var i = 0; i < shots.length; i++) {
                 var shot = shots[i];
                 var cell = "#" + shot + against;
-                if ($(cell).hasClass("placed_ship")) {
+                if (gameData.hitsAndSinks[turn][id].hasOwnProperty(shot)) { //cambiar if por gamedata.Hitsandsinks.turn.id.hasOwnProperty(shot)
                     $(cell).addClass("hit");
                 } else {
                     $(cell).addClass("miss");
