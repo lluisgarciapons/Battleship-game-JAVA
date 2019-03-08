@@ -1,3 +1,22 @@
+
+@font-face {
+    font-family: 'united_kingdomregular';
+    src: url("/fonts/united_kingdom_demo-webfont.woff2") format('woff2'),
+    url('/fonts/united_kingdom_demo-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'best_teaseregular';
+    src: url('/fonts/best_tease-webfont.woff2') format('woff2'),
+    url('/fonts/best_tease-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 body {
     font-family: 'Arvo', serif;
 }
@@ -576,4 +595,48 @@ body {
 
 .wrong_conf_pass {
     background-color: rgba(250, 101, 50, 0.52);
+}
+
+.history_table table {
+    display: flex;
+    justify-content: center;
+}
+
+.history_table tbody {
+    display: block;
+    margin-top: 10px;
+}
+
+.history_table tbody td {
+    padding: 0 25px;
+    padding-top: 8px;
+    background-color: rgba(71, 71, 73, 0.65);
+}
+
+.type_history {
+    font-weight: lighter;
+    color: #b3b3b3;
+}
+
+.hits_history {
+    margin: 5px;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    border: 3px solid #fcbb29;
+}
+
+.damage_history {
+    margin: 5px;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    background-color: #fc1600;
+    border: 3px solid #fc1600;
+}
+
+.line_through {
+    text-decoration: red line-through;
 }

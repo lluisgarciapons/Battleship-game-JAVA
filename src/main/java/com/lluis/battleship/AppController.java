@@ -174,16 +174,24 @@ public class AppController {
         Map<Integer, Map<Long, Object>> dto = new LinkedHashMap<>();
         Map<Long, Object> innerDTO;
         Set<Salvo> salvoes = findSalvoes(gamePlayers);
+
         for (Salvo salvo : salvoes) {
             if (!dto.containsKey(salvo.getTurn())) {
                 innerDTO = new LinkedHashMap<>();
-                innerDTO.put(salvo.getGamePlayer().getId(), hitsDTO(salvo, gamePlayers));
+                innerDTO.put(salvo.getGamePlayer().getId(), HandS(salvo, salvoes, gamePlayers));
                 dto.put(salvo.getTurn(), innerDTO);
             } else {
                 innerDTO = dto.get(salvo.getTurn());
-                innerDTO.put(salvo.getGamePlayer().getId(), hitsDTO(salvo, gamePlayers));
+                innerDTO.put(salvo.getGamePlayer().getId(), HandS(salvo, salvoes, gamePlayers));
             }
         }
+        return dto;
+    }
+
+    private Map<String, Object> HandS(Salvo salvo, Set<Salvo> salvoes, Set<GamePlayer> gamePlayers){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("hits", hitsDTO(salvo, gamePlayers));
+        dto.put("damages", sinksDTO(salvo, salvoes, gamePlayers));
         return dto;
     }
 
@@ -194,12 +202,45 @@ public class AppController {
         for (String shot : salvo.getLocations()) {
             for (Ship ship : opponent.getShips()) {
                 for (String shipLocation : ship.getLocations()) {
-                    if (shot == shipLocation) {
+                    if (shot.equals(shipLocation)) {
                         dto.put(shot, ship.getType());
                     }
                 }
             }
         }
+        return dto;
+    }
+
+    private Map<String, Integer> sinksDTO(Salvo salvo, Set<Salvo> salvoes, Set<GamePlayer> gamePlayers){
+        Map<String, Integer> dto = new LinkedHashMap<>();
+
+        dto.put("Patrol Boat", 0);
+        dto.put("Submarine", 0);
+        dto.put("Destroyer", 0);
+        dto.put("Battleship", 0);
+        dto.put("Carrier", 0);
+
+        Integer turns = salvo.getTurn();
+        Long gameplayerId = salvo.getGamePlayer().getId();
+        GamePlayer opponent = getOpponent(gamePlayers, gameplayerId);
+
+        for (Salvo thisSalvo : salvoes) {
+//            System.out.println(thisSalvo.getTurn());
+            if (thisSalvo.getTurn() <= turns) {
+                if(gameplayerId == thisSalvo.getGamePlayer().getId()){
+                    for (String shot : thisSalvo.getLocations()) {
+                        for (Ship ship : opponent.getShips()) {
+                            for (String shipLocation : ship.getLocations()) {
+                                if (shot.equals(shipLocation)) {
+                                    dto.put(ship.getType(), dto.get(ship.getType()) + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return dto;
     }
 
@@ -221,6 +262,7 @@ public class AppController {
                 .stream()
                 .map(gamePlayer -> gamePlayer.getSalvoes())
                 .flatMap(salvoSet -> salvoSet.stream())
+                .sorted(Comparator.comparing(Salvo::getTurn))
                 .collect(Collectors.toSet());
     }
 
@@ -425,5 +467,6 @@ public class AppController {
         return map;
     }
 }
+
 
 
