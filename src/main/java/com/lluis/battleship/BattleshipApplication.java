@@ -1,13 +1,13 @@
 package com.lluis.battleship;
 
-import com.sun.org.apache.bcel.internal.generic.SALOAD;
+// import com.sun.org.apache.bcel.internal.generic.SALOAD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.support.SimpleTriggerContext;
+// import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,29 +30,26 @@ import java.util.Set;
 @SpringBootApplication
 public class BattleshipApplication {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(BattleshipApplication.class, args);
-	}
+        SpringApplication.run(BattleshipApplication.class, args);
+    }
 
-	@Bean
-	public CommandLineRunner initData(GameRepository gameRepository,
-                                      PlayerRepository playerRepository,
-                                      GamePlayerRepository gamePlayerRepository,
-                                      ShipRepository shipRepository,
-                                      SalvoRepository salvoRepository,
-                                      ScoreRepository scoreRepository) {
-		return (args) -> {
+    @Bean
+    public CommandLineRunner initData(GameRepository gameRepository, PlayerRepository playerRepository,
+            GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository,
+            ScoreRepository scoreRepository) {
+        return (args) -> {
 
             Player player1 = new Player("Bauer24", "j.bauer@ctu.gov", "24");
             Player player2 = new Player("ZerO-brian", "c.obrian@ctu.gov", "42");
             Player player3 = new Player("Kimbi", "kim_bauer@gmail.com", "kb");
             Player player4 = new Player("xXalmeXx", "t.almeida@ctu.gov", "mole");
 
-			playerRepository.save(player1);
-			playerRepository.save(player2);
-			playerRepository.save(player3);
-			playerRepository.save(player4);
+            playerRepository.save(player1);
+            playerRepository.save(player2);
+            playerRepository.save(player3);
+            playerRepository.save(player4);
 
             Date now = new Date();
 
@@ -67,12 +64,12 @@ public class BattleshipApplication {
 
             game1.setCreationDate(now);
             game2.setCreationDate(Date.from(now.toInstant().plusSeconds(3600)));
-            game3.setCreationDate(Date.from(now.toInstant().plusSeconds(3600*2)));
-            game4.setCreationDate(Date.from(now.toInstant().plusSeconds(3600*3)));
-            game5.setCreationDate(Date.from(now.toInstant().plusSeconds(3600*4)));
-            game6.setCreationDate(Date.from(now.toInstant().plusSeconds(3600*5)));
-            game7.setCreationDate(Date.from(now.toInstant().plusSeconds(3600*6)));
-            game8.setCreationDate(Date.from(now.toInstant().plusSeconds(3600*7)));
+            game3.setCreationDate(Date.from(now.toInstant().plusSeconds(3600 * 2)));
+            game4.setCreationDate(Date.from(now.toInstant().plusSeconds(3600 * 3)));
+            game5.setCreationDate(Date.from(now.toInstant().plusSeconds(3600 * 4)));
+            game6.setCreationDate(Date.from(now.toInstant().plusSeconds(3600 * 5)));
+            game7.setCreationDate(Date.from(now.toInstant().plusSeconds(3600 * 6)));
+            game8.setCreationDate(Date.from(now.toInstant().plusSeconds(3600 * 7)));
 
             gameRepository.save(game1);
             gameRepository.save(game2);
@@ -145,7 +142,7 @@ public class BattleshipApplication {
             Ship ship21 = new Ship("Patrol Boat", PB4, GP52);
             Ship ship22 = new Ship("Destroyer", DS2, GP61);
             Ship ship23 = new Ship("Patrol Boat", PB3, GP61);
-            Ship ship24 = new Ship("Destroyer", DS2,GP81);
+            Ship ship24 = new Ship("Destroyer", DS2, GP81);
             Ship ship25 = new Ship("Patrol Boat", PB3, GP81);
             Ship ship26 = new Ship("Submarine", SB2, GP82);
             Ship ship27 = new Ship("Patrol Boat", PB4, GP82);
@@ -263,7 +260,7 @@ public class BattleshipApplication {
             scoreRepository.save(score42);
 
         };
-	}
+    }
 }
 
 @Configuration
@@ -274,11 +271,10 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(inputName-> {
+        auth.userDetailsService(inputName -> {
             Player player = playerRepository.findByEmail(inputName);
             if (player != null) {
-                return new User(player.getUserName(), player.getPassword(),
-                        AuthorityUtils.createAuthorityList("USER"));
+                return new User(player.getUserName(), player.getPassword(), AuthorityUtils.createAuthorityList("USER"));
             } else {
                 throw new UsernameNotFoundException("Unknown user: " + inputName);
             }
@@ -292,17 +288,11 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/web/**").permitAll()
-                .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/api/games").permitAll()
-                .antMatchers("/api/players").permitAll()
-                .anyRequest().fullyAuthenticated();
+        http.authorizeRequests().antMatchers("/web/**").permitAll().antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/api/games").permitAll().antMatchers("/api/players").permitAll().anyRequest()
+                .fullyAuthenticated();
 
-        http.formLogin()
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .loginPage("/api/login");
+        http.formLogin().usernameParameter("email").passwordParameter("password").loginPage("/api/login");
 
         http.logout().logoutUrl("/api/logout");
 
@@ -310,7 +300,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         // if user is not authenticated, just send an authentication failure response
-        http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+        http.exceptionHandling()
+                .authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
         // if login is successful, just clear the flags asking for authentication
         http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
 

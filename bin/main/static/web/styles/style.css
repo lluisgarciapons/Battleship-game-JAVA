@@ -1,0 +1,642 @@
+
+@font-face {
+    font-family: 'united_kingdomregular';
+    src: url("/fonts/united_kingdom_demo-webfont.woff2") format('woff2'),
+    url('/fonts/united_kingdom_demo-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'best_teaseregular';
+    src: url('/fonts/best_tease-webfont.woff2') format('woff2'),
+    url('/fonts/best_tease-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+body {
+    font-family: 'Arvo', serif;
+}
+
+.games_body {
+    height: 100vh;
+    background-image: url("img/battleship_background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hidden {
+    display: none;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    background-image: url("img/steel_pattern.jpg");
+    background-size: cover;
+    border-bottom: 2px groove #4b4b4b;
+}
+
+.auth_buttons {
+    width: 50%;
+    justify-content: flex-end;
+    margin-right: 5%;
+}
+
+.auth_buttons,
+#after-login {
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+#after-login {
+    width: 50%;
+    justify-content: flex-end;
+}
+
+.banner {
+    width: 50%;
+    margin-left: 5%;
+}
+
+.banner img {
+    height: 60px;
+}
+
+#hi-user {
+    margin: 0;
+}
+
+#logout-success-alert {
+    position: fixed;
+}
+
+.btn {
+    margin: 10px 5px;
+}
+
+.alert {
+    width: 100%;
+    text-align: center;
+}
+
+#players {
+    display: flex;
+    /*justify-content: space-around;*/
+    color: #d5d5d3;
+}
+
+.player {
+    display: flex;
+    justify-content: center;
+    width: 33.3%;
+}
+
+#user {
+    justify-content: flex-end;
+}
+
+#opponent {
+    justify-content: flex-start;
+}
+
+.games {grid-area: games;}
+.new_game {grid-area: btn;}
+.leaderboard {grid-area: leaderboard;}
+
+.tables_content {
+    /*display: flex;*/
+    /*justify-content: space-around;*/
+    max-height: 465px;
+    min-height: 465px;
+    overflow: hidden;
+    display: grid;
+    grid-template-areas:
+    'games games btn'
+    /*'games games btn'*/
+    /*'games games btn'*/
+    /*'games games leaderboard'*/
+    'games games leaderboard'
+    'games games leaderboard';
+    grid-gap: 5%;
+    margin: 5% 5% 0 5%;
+}
+
+.tables_content > div {
+    border-radius: 4px;
+    width: 100%;
+}
+
+.tables_content table {
+    border-bottom: 2px groove #4b4b4b;
+    background-color: rgba(202, 226, 227, 0.65);
+    margin-bottom: 0;
+}
+
+.games > table {
+    margin: auto;
+    text-align: center;
+}
+
+.games thead {
+    background-color: rgba(202, 226, 227, 0.65);
+    font-size: 20px;
+}
+
+.games tbody td {
+    text-align: center;
+    padding: 5px;
+    height: 30px;
+    box-sizing: content-box;
+}
+
+.games tbody button {
+    width: 120px;
+    margin: 0;
+}
+
+.only_one_player {
+    animation-name:waitingOpponentColor;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes waitingOpponentColor {
+    0% {
+        color: red;
+    }
+    50% {
+        color: white;
+    }
+    100% {
+        color: red;
+    }
+}
+
+.new_game {
+    background-image: url("img/Atomic-Explosion-Transparent-Background.png"), url("img/air-force-vector-101.png"), url("img/steel_background.jpg");
+    background-size: 110% 100%, cover, cover;
+    background-position: top, top, top;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    display: flex;
+    border-bottom: 2px groove #4b4b4b;
+    border-right: 2px groove #4b4b4b;
+}
+
+.new_game_btn {
+    font-size: 50px;
+    height: 70px;
+    width: 200px;
+    font-family: "Mesquite Std";
+}
+
+.enter_btn,
+.new_game_btn{
+    background: linear-gradient(#454545, rgba(144, 144, 144, 0.99));
+}
+
+.join_btn {
+    background: linear-gradient(#6ca9c6, #454545);
+}
+
+.new_game_btn,
+.enter_btn,
+.join_btn {
+    color: #d5d5d3;
+    text-align: center;
+    font-weight: normal;
+    margin: auto auto;
+    /*box-shadow: 3px 9px 6px #999;*/
+}
+
+.new_game_btn:active {
+    /*transform: translateY(4px);*/
+    background: linear-gradient(rgba(144, 144, 144, 0.99), #454545);
+    box-shadow: 3px 5px 6px #555447;
+}
+
+.new_game_btn:hover {
+    animation-name: newGameColor;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes newGameColor {
+    0% {
+        color: white;
+    }
+    50% {
+        color: rgba(0, 0, 0, 0.82);
+    }
+    100% {
+        color: white;
+    }
+}
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size: 13px;
+    margin: 0;
+}
+
+.leaderboard img {
+    margin-bottom: 5px;
+    align-self: flex-end;
+    height: 30px;
+    width: 180px;
+}
+
+.leaderboard_table {
+    max-height: 223px; !important;
+    min-height: 223px;!important;
+
+}
+
+.leaderboard_table thead tr {
+    display: flex;
+}
+
+.games thead {
+    display: block;
+}
+
+.games thead tr th {
+    width: 20%;
+}
+
+.games tbody {
+    width: 100%;
+    display: block;
+    min-height: 200px;
+    max-height: 407px;
+    overflow-y: auto;
+}
+
+.games tbody tr td {
+    width: 10%;
+}
+
+.leaderboard_table thead th {
+    background-color: rgba(202, 226, 227, 0.65);
+    justify-content: space-evenly;
+    width: 20%;
+}
+
+.leaderboard_table tbody {
+    max-height: 176px;
+    display: block;
+    overflow-y: auto; !important;
+}
+
+.leaderboard_table tbody td {
+    width: 10%;
+}
+
+.leaderboard > h3 {
+    border-radius: 4px;
+    /*font-family: "Felix Titling";*/
+    background-color: rgba(108, 108, 107, 0.68);
+    text-decoration: underline;
+}
+
+.leaderboard tr td:nth-child(2){
+    font-weight: bold;
+}
+
+
+
+
+/*GAME*/
+
+.game_body {
+    min-height: 100vh;
+    background-image: url("img/164053222-battleship-wallpapers.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#game-display {
+    display: flex;
+    align-items: center;
+    height: 400px;
+}
+
+#place-ships {
+    margin-top: 24px;
+}
+
+.grid_table,
+.grid_table td{
+    font-family: Playbill;
+    font-size: 20px;
+    border-collapse: collapse;
+}
+
+.grid_table th,
+.grid_table td {
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+
+}
+
+.tcell {
+    /*border-radius: 10px;*/
+    border: 1px solid #c7c7c7;
+    background-color: rgba(75, 75, 75, 0.69);
+}
+
+.grid_table tr td:first-child {
+    border-radius: 0;
+    border: 0;
+    display: none;
+}
+
+.grid_table tr:first-child th:first-child{
+    border-top-left-radius: 10px;
+}
+
+.grid_table tr:first-child th:last-child{
+    border-top-right-radius: 10px;
+}
+
+.grid_table tr:last-child td:first-child{
+    border-bottom-left-radius: 10px;
+}
+
+#my-table,
+#opp-table {
+    display: flex;
+    justify-content: center;
+}
+
+.table_headers {
+    background-color: rgba(46, 56, 75, 0.88);
+    display: none;
+}
+
+.grid_table {
+    /*background-image: url("");*/
+    background-size: cover;
+
+}
+
+.missile {
+    margin: 10px 0;
+    height: 30px;
+    width: 100px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.missile1 {
+    background-image: url("img/missile1.png");
+}
+
+.missile2 {
+    background-image: url("img/missile2.png");
+}
+
+.fire_button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    height: 100%;
+}
+
+.shoot_button,
+.shoot_button:active {
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    background-image: url("img/dragon_radar.gif") !important;
+    background-size: 118%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.shoot_button:active p {
+    color: #aa2821 !important;
+}
+
+.fire_button p {
+    font-family: "Courier New";
+    color: #aaa224;
+    font-weight: bold;
+}
+
+.p_fire {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.p_missile {
+    font-size: 15px;
+    margin: 5px 0 0 0;
+}
+
+.ships {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.ship {
+    background-color: gray;
+    border: 2px solid white;
+}
+
+.carrier {
+    width: 250px;
+    height: 50px;
+}
+
+.battleship {
+    width: 200px;
+    height: 50px;
+}
+
+.submarine {
+    width: 150px;
+    height: 50px;
+}
+
+.destroyer {
+    width: 150px;
+    height: 50px;
+}
+
+.patrolboat {
+    width: 100px;
+    height: 50px;
+}
+
+.used {
+    background-color: black;
+}
+
+.selected {
+    border: 2px dotted #b4b4b4;
+}
+
+.highlighted {
+    background-color: #9be89b;
+}
+
+.target {
+    background-image: url("img/target001.gif");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.conflict {
+    background-color: indianred;
+}
+
+/*.placed_ship {*/
+    /*background-color: darkslategray;*/
+/*}*/
+
+.hovered {
+    background-color: #292929;
+}
+
+.hovered_ship {
+    animation-name: hoveredShip;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes hoveredShip {
+    0% {
+        background-color: darkgray;
+    }
+    50% {
+        background-color: rgb(92, 221, 52);
+    }
+    100% {
+        background-color: darkgray;
+    }
+}
+
+.highlight_replace {
+    animation-name: replaceSalvo;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes replaceSalvo {
+    0% {
+        background-size: 100%;
+    }
+    25% {
+        background-size: 65%;
+    }
+    50% {
+        background-size: 175%;
+    }
+    75% {
+        background-size: 65%;
+    }
+    100% {
+        background-size: 100%;
+    }
+}
+
+.placed_ship {
+    /*background-image: url("img/steel_pattern.jpg");*/
+    /*background-size: 200px;*/
+    /*background-position: center;*/
+    background-color: darkgrey !important;
+}
+
+.hit {
+    /*background-image: url("img/explosion_hit.gif");*/
+    background-image: url("img/fire-png-gif--489.gif");
+    background-size: cover;
+    background-position: center;
+    background-color: darkred !important;
+    border: 1px solid #c7c7c7;
+}
+
+.miss {
+    /*background-image: url("img/water_waves.png");*/
+    background-image: url("img/water2.gif");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-color: dodgerblue !important;
+}
+
+.shot {
+    background-image: url("img/8bitbomb.gif");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(194,227,216,0.5);
+}
+
+.target {
+    /*background-color: blue;*/
+    background-image: url("img/target001.gif") !important;
+}
+
+.wrong_conf_pass {
+    background-color: rgba(250, 101, 50, 0.52);
+}
+
+.history_table table {
+    display: flex;
+    justify-content: center;
+}
+
+.history_table tbody {
+    display: block;
+    margin-top: 10px;
+}
+
+.history_table tbody td {
+    padding: 0 25px;
+    padding-top: 8px;
+    background-color: rgba(71, 71, 73, 0.65);
+}
+
+.type_history {
+    font-weight: lighter;
+    color: #b3b3b3;
+}
+
+.hits_history {
+    margin: 5px;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    border: 3px solid #fcbb29;
+}
+
+.damage_history {
+    margin: 5px;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    background-color: #fc1600;
+    border: 3px solid #fc1600;
+}
+
+.line_through {
+    text-decoration: red line-through;
+}
